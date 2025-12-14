@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Usuario")
 @RestController
-@RequestMapping("/api/v1/usuarios")
+@RequestMapping("/api/v1/usuario")
 @Validated
 public class UsuarioController {
 

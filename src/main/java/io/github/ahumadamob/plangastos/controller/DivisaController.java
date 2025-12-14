@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Divisa")
 @RestController
-@RequestMapping("/api/v1/divisas")
+@RequestMapping("/api/v1/divisa")
 @Validated
 public class DivisaController {
 

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Presupuesto")
 @RestController
-@RequestMapping("/api/v1/presupuestos")
+@RequestMapping("/api/v1/presupuesto")
 @Validated
 public class PresupuestoController {
 

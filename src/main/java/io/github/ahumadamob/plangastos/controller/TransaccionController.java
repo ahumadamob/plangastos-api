@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Transacción")
 @RestController
-@RequestMapping("/api/v1/transacciones")
+@RequestMapping("/api/v1/transaccion")
 @Validated
 public class TransaccionController {
 

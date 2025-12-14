@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Rubro")
 @RestController
-@RequestMapping("/api/v1/rubros")
+@RequestMapping("/api/v1/rubro")
 @Validated
 public class RubroController {
 

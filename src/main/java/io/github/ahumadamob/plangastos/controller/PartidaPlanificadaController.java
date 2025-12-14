@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Partida planificada")
 @RestController
-@RequestMapping("/api/v1/partidas-planificadas")
+@RequestMapping("/api/v1/partida-planificada")
 @Validated
 public class PartidaPlanificadaController {
 

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Plan presupuestario")
 @RestController
-@RequestMapping("/api/v1/planes-presupuestarios")
+@RequestMapping("/api/v1/plan-presupuestario")
 @Validated
 public class PlanPresupuestarioController {
 

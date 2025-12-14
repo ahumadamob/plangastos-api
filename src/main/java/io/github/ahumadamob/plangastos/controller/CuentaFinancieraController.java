@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Cuenta financiera")
 @RestController
-@RequestMapping("/api/v1/cuentas-financieras")
+@RequestMapping("/api/v1/cuenta-financiera")
 @Validated
 public class CuentaFinancieraController {
 
