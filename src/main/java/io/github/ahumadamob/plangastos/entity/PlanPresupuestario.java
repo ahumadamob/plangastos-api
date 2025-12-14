@@ -1,10 +1,36 @@
 package io.github.ahumadamob.plangastos.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "planes_presupuestarios")
 public class PlanPresupuestario extends BaseEntity {
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "divisa_id", nullable = false)
     private Divisa divisa;
+
+    @NotBlank
+    @Column(nullable = false)
     private String nombre;
+
     private String descripcion;
+
+    @NotNull
+    @Column(nullable = false)
     private Boolean activo;
 
     public Usuario getUsuario() {

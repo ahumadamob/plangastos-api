@@ -2,12 +2,37 @@ package io.github.ahumadamob.plangastos.entity;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "presupuestos")
 public class Presupuesto extends BaseEntity {
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_id", nullable = false)
     private PlanPresupuestario plan;
+
+    @NotBlank
+    @Column(nullable = false)
     private String nombre;
+
+    @Column(unique = true)
     private String codigo;
+
     private LocalDate fechaDesde;
+
     private LocalDate fechaHasta;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "presupuesto_origen_id")
     private Presupuesto presupuestoOrigen;
 
     public PlanPresupuestario getPlan() {
