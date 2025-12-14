@@ -8,10 +8,10 @@
 		<version>4.0.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.ahumadamob</groupId>
-	<artifactId>plangastos-api</artifactId>
+	<groupId>io.github.ahumadamob</groupId>
+	<artifactId>plangastos</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>plangastos-api</name>
+	<name>PlanGastos</name>
 	<description>Plan Gastos API</description>
 	<url/>
 	<licenses>

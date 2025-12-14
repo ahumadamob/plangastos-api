@@ -1,13 +1,13 @@
-package com.ahumadamob.plangastos_api;
+package io.github.ahumadamob.plangastos;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PlangastosApiApplication {
+public class PlangastosApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PlangastosApiApplication.class, args);
+		SpringApplication.run(PlangastosApplication.class, args);
 	}
 
 }
