@@ -6,6 +6,7 @@ import io.github.ahumadamob.plangastos.dto.common.ApiResponseSuccessDto;
 import io.github.ahumadamob.plangastos.mapper.DivisaMapper;
 import io.github.ahumadamob.plangastos.service.DivisaService;
 import io.github.ahumadamob.plangastos.util.ApiResponseFactory;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Divisa")
 @RestController
 @RequestMapping("/api/v1/divisas")
 @Validated
