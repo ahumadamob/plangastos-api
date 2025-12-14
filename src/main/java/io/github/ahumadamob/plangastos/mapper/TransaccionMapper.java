@@ -1,7 +1,7 @@
 package io.github.ahumadamob.plangastos.mapper;
 
-import io.github.ahumadamob.plangastos.dto.transaccion.TransaccionRequestDto;
-import io.github.ahumadamob.plangastos.dto.transaccion.TransaccionResponseDto;
+import io.github.ahumadamob.plangastos.dto.TransaccionRequestDto;
+import io.github.ahumadamob.plangastos.dto.TransaccionResponseDto;
 import io.github.ahumadamob.plangastos.entity.Transaccion;
 
 public class TransaccionMapper {

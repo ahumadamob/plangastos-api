@@ -1,18 +1,17 @@
-package io.github.ahumadamob.plangastos.dto.rubro;
+package io.github.ahumadamob.plangastos.dto;
 
 import java.time.LocalDateTime;
 
-import io.github.ahumadamob.plangastos.entity.NaturalezaMovimiento;
-import io.github.ahumadamob.plangastos.entity.Rubro;
+import io.github.ahumadamob.plangastos.entity.Divisa;
 import io.github.ahumadamob.plangastos.entity.Usuario;
 
-public class RubroResponseDto {
+public class PlanPresupuestarioResponseDto {
 
     private Long id;
     private Usuario usuario;
-    private NaturalezaMovimiento naturaleza;
+    private Divisa divisa;
     private String nombre;
-    private Rubro parent;
+    private String descripcion;
     private Boolean activo;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -33,12 +32,12 @@ public class RubroResponseDto {
         this.usuario = usuario;
     }
 
-    public NaturalezaMovimiento getNaturaleza() {
-        return naturaleza;
+    public Divisa getDivisa() {
+        return divisa;
     }
 
-    public void setNaturaleza(NaturalezaMovimiento naturaleza) {
-        this.naturaleza = naturaleza;
+    public void setDivisa(Divisa divisa) {
+        this.divisa = divisa;
     }
 
     public String getNombre() {
@@ -49,12 +48,12 @@ public class RubroResponseDto {
         this.nombre = nombre;
     }
 
-    public Rubro getParent() {
-        return parent;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setParent(Rubro parent) {
-        this.parent = parent;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public Boolean getActivo() {

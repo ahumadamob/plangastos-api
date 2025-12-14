@@ -1,13 +1,12 @@
-package io.github.ahumadamob.plangastos.dto.divisa;
+package io.github.ahumadamob.plangastos.dto;
 
 import java.time.LocalDateTime;
 
-public class DivisaResponseDto {
+public class UsuarioResponseDto {
 
     private Long id;
-    private String codigo;
     private String nombre;
-    private String simbolo;
+    private String email;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -19,14 +18,6 @@ public class DivisaResponseDto {
         this.id = id;
     }
 
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
     public String getNombre() {
         return nombre;
     }
@@ -35,12 +26,12 @@ public class DivisaResponseDto {
         this.nombre = nombre;
     }
 
-    public String getSimbolo() {
-        return simbolo;
+    public String getEmail() {
+        return email;
     }
 
-    public void setSimbolo(String simbolo) {
-        this.simbolo = simbolo;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public LocalDateTime getCreatedAt() {

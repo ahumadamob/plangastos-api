@@ -1,4 +1,4 @@
-package io.github.ahumadamob.plangastos.dto.usuario;
+package io.github.ahumadamob.plangastos.dto;
 
 public class UsuarioRequestDto {
 

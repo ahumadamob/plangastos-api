@@ -1,4 +1,4 @@
-package io.github.ahumadamob.plangastos.dto.cuentafinanciera;
+package io.github.ahumadamob.plangastos.dto;
 
 import java.math.BigDecimal;
 

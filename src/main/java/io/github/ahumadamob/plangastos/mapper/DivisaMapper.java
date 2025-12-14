@@ -1,7 +1,7 @@
 package io.github.ahumadamob.plangastos.mapper;
 
-import io.github.ahumadamob.plangastos.dto.divisa.DivisaRequestDto;
-import io.github.ahumadamob.plangastos.dto.divisa.DivisaResponseDto;
+import io.github.ahumadamob.plangastos.dto.DivisaRequestDto;
+import io.github.ahumadamob.plangastos.dto.DivisaResponseDto;
 import io.github.ahumadamob.plangastos.entity.Divisa;
 
 public class DivisaMapper {

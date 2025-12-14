@@ -1,7 +1,7 @@
 package io.github.ahumadamob.plangastos.mapper;
 
-import io.github.ahumadamob.plangastos.dto.rubro.RubroRequestDto;
-import io.github.ahumadamob.plangastos.dto.rubro.RubroResponseDto;
+import io.github.ahumadamob.plangastos.dto.RubroRequestDto;
+import io.github.ahumadamob.plangastos.dto.RubroResponseDto;
 import io.github.ahumadamob.plangastos.entity.Rubro;
 
 public class RubroMapper {

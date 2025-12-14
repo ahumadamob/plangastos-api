@@ -1,14 +1,15 @@
-package io.github.ahumadamob.plangastos.dto.planpresupuestario;
+package io.github.ahumadamob.plangastos.dto;
 
-import io.github.ahumadamob.plangastos.entity.Divisa;
+import io.github.ahumadamob.plangastos.entity.NaturalezaMovimiento;
+import io.github.ahumadamob.plangastos.entity.Rubro;
 import io.github.ahumadamob.plangastos.entity.Usuario;
 
-public class PlanPresupuestarioRequestDto {
+public class RubroRequestDto {
 
     private Usuario usuario;
-    private Divisa divisa;
+    private NaturalezaMovimiento naturaleza;
     private String nombre;
-    private String descripcion;
+    private Rubro parent;
     private Boolean activo;
 
     public Usuario getUsuario() {
@@ -19,12 +20,12 @@ public class PlanPresupuestarioRequestDto {
         this.usuario = usuario;
     }
 
-    public Divisa getDivisa() {
-        return divisa;
+    public NaturalezaMovimiento getNaturaleza() {
+        return naturaleza;
     }
 
-    public void setDivisa(Divisa divisa) {
-        this.divisa = divisa;
+    public void setNaturaleza(NaturalezaMovimiento naturaleza) {
+        this.naturaleza = naturaleza;
     }
 
     public String getNombre() {
@@ -35,12 +36,12 @@ public class PlanPresupuestarioRequestDto {
         this.nombre = nombre;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public Rubro getParent() {
+        return parent;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setParent(Rubro parent) {
+        this.parent = parent;
     }
 
     public Boolean getActivo() {

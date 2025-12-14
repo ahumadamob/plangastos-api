@@ -1,7 +1,7 @@
 package io.github.ahumadamob.plangastos.mapper;
 
-import io.github.ahumadamob.plangastos.dto.presupuesto.PresupuestoRequestDto;
-import io.github.ahumadamob.plangastos.dto.presupuesto.PresupuestoResponseDto;
+import io.github.ahumadamob.plangastos.dto.PresupuestoRequestDto;
+import io.github.ahumadamob.plangastos.dto.PresupuestoResponseDto;
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
 
 public class PresupuestoMapper {

@@ -1,4 +1,4 @@
-package io.github.ahumadamob.plangastos.dto.divisa;
+package io.github.ahumadamob.plangastos.dto;
 
 public class DivisaRequestDto {
 

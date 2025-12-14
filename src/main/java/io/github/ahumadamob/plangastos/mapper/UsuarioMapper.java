@@ -1,7 +1,7 @@
 package io.github.ahumadamob.plangastos.mapper;
 
-import io.github.ahumadamob.plangastos.dto.usuario.UsuarioRequestDto;
-import io.github.ahumadamob.plangastos.dto.usuario.UsuarioResponseDto;
+import io.github.ahumadamob.plangastos.dto.UsuarioRequestDto;
+import io.github.ahumadamob.plangastos.dto.UsuarioResponseDto;
 import io.github.ahumadamob.plangastos.entity.Usuario;
 
 public class UsuarioMapper {

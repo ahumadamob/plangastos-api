@@ -1,4 +1,4 @@
-package io.github.ahumadamob.plangastos.dto.transaccion;
+package io.github.ahumadamob.plangastos.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

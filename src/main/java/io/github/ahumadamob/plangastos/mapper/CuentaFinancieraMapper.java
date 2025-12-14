@@ -1,7 +1,7 @@
 package io.github.ahumadamob.plangastos.mapper;
 
-import io.github.ahumadamob.plangastos.dto.cuentafinanciera.CuentaFinancieraRequestDto;
-import io.github.ahumadamob.plangastos.dto.cuentafinanciera.CuentaFinancieraResponseDto;
+import io.github.ahumadamob.plangastos.dto.CuentaFinancieraRequestDto;
+import io.github.ahumadamob.plangastos.dto.CuentaFinancieraResponseDto;
 import io.github.ahumadamob.plangastos.entity.CuentaFinanciera;
 
 public class CuentaFinancieraMapper {

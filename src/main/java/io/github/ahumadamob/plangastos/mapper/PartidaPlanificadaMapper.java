@@ -1,7 +1,7 @@
 package io.github.ahumadamob.plangastos.mapper;
 
-import io.github.ahumadamob.plangastos.dto.partidaplanificada.PartidaPlanificadaRequestDto;
-import io.github.ahumadamob.plangastos.dto.partidaplanificada.PartidaPlanificadaResponseDto;
+import io.github.ahumadamob.plangastos.dto.PartidaPlanificadaRequestDto;
+import io.github.ahumadamob.plangastos.dto.PartidaPlanificadaResponseDto;
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
 
 public class PartidaPlanificadaMapper {
