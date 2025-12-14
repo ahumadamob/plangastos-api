@@ -1,4 +1,4 @@
-package io.github.ahumadamob.plangastos.dto.mapper;
+package io.github.ahumadamob.plangastos.mapper;
 
 import io.github.ahumadamob.plangastos.dto.partidaplanificada.PartidaPlanificadaRequestDto;
 import io.github.ahumadamob.plangastos.dto.partidaplanificada.PartidaPlanificadaResponseDto;

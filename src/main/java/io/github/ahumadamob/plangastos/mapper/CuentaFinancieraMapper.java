@@ -1,4 +1,4 @@
-package io.github.ahumadamob.plangastos.dto.mapper;
+package io.github.ahumadamob.plangastos.mapper;
 
 import io.github.ahumadamob.plangastos.dto.cuentafinanciera.CuentaFinancieraRequestDto;
 import io.github.ahumadamob.plangastos.dto.cuentafinanciera.CuentaFinancieraResponseDto;
