@@ -1,5 +1,4 @@
 package io.github.ahumadamob.plangastos.dto;
-
 import java.math.BigDecimal;
 
 import io.github.ahumadamob.plangastos.entity.Divisa;
