@@ -1,15 +1,19 @@
 package io.github.ahumadamob.plangastos.mapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import io.github.ahumadamob.plangastos.dto.CuentaFinancieraRequestDto;
 import io.github.ahumadamob.plangastos.dto.CuentaFinancieraResponseDto;
 import io.github.ahumadamob.plangastos.entity.CuentaFinanciera;
+import io.github.ahumadamob.plangastos.service.CuentaFinancieraService;
+import io.github.ahumadamob.plangastos.service.DivisaService;
+import io.github.ahumadamob.plangastos.service.UsuarioService;
 
 public class CuentaFinancieraMapper {
-
+	
     public static CuentaFinanciera requestToEntity(CuentaFinancieraRequestDto request) {
         CuentaFinanciera cuentaFinanciera = new CuentaFinanciera();
-        cuentaFinanciera.setUsuario(request.getUsuario());
-        cuentaFinanciera.setDivisa(request.getDivisa());
+
         cuentaFinanciera.setNombre(request.getNombre());
         cuentaFinanciera.setTipo(request.getTipo());
         cuentaFinanciera.setSaldoInicial(request.getSaldoInicial());

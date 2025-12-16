@@ -9,76 +9,62 @@ import io.github.ahumadamob.plangastos.entity.Rubro;
 
 public class TransaccionRequestDto {
 
-    private Presupuesto presupuesto;
-    private Rubro rubro;
+    private Long presupuesto_id;
+    private Long rubro_id;
     private String descripcion;
-    private CuentaFinanciera cuenta;
+    private Long cuentaFinanciera_id;
     private LocalDate fecha;
     private BigDecimal monto;
     private String referenciaExterna;
-    private PartidaPlanificada partidaPlanificada;
+    private Long partidaPlanificada_id;
+	public Long getPresupuesto_id() {
+		return presupuesto_id;
+	}
+	public void setPresupuesto_id(Long presupuesto_id) {
+		this.presupuesto_id = presupuesto_id;
+	}
+	public Long getRubro_id() {
+		return rubro_id;
+	}
+	public void setRubro_id(Long rubro_id) {
+		this.rubro_id = rubro_id;
+	}
+	public String getDescripcion() {
+		return descripcion;
+	}
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+	public Long getCuentaFinanciera_id() {
+		return cuentaFinanciera_id;
+	}
+	public void setCuentaFinanciera_id(Long cuentaFinanciera_id) {
+		this.cuentaFinanciera_id = cuentaFinanciera_id;
+	}
+	public LocalDate getFecha() {
+		return fecha;
+	}
+	public void setFecha(LocalDate fecha) {
+		this.fecha = fecha;
+	}
+	public BigDecimal getMonto() {
+		return monto;
+	}
+	public void setMonto(BigDecimal monto) {
+		this.monto = monto;
+	}
+	public String getReferenciaExterna() {
+		return referenciaExterna;
+	}
+	public void setReferenciaExterna(String referenciaExterna) {
+		this.referenciaExterna = referenciaExterna;
+	}
+	public Long getPartidaPlanificada_id() {
+		return partidaPlanificada_id;
+	}
+	public void setPartidaPlanificada_id(Long partidaPlanificada_id) {
+		this.partidaPlanificada_id = partidaPlanificada_id;
+	}
 
-    public Presupuesto getPresupuesto() {
-        return presupuesto;
-    }
-
-    public void setPresupuesto(Presupuesto presupuesto) {
-        this.presupuesto = presupuesto;
-    }
-
-    public Rubro getRubro() {
-        return rubro;
-    }
-
-    public void setRubro(Rubro rubro) {
-        this.rubro = rubro;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public CuentaFinanciera getCuenta() {
-        return cuenta;
-    }
-
-    public void setCuenta(CuentaFinanciera cuenta) {
-        this.cuenta = cuenta;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
-
-    public BigDecimal getMonto() {
-        return monto;
-    }
-
-    public void setMonto(BigDecimal monto) {
-        this.monto = monto;
-    }
-
-    public String getReferenciaExterna() {
-        return referenciaExterna;
-    }
-
-    public void setReferenciaExterna(String referenciaExterna) {
-        this.referenciaExterna = referenciaExterna;
-    }
-
-    public PartidaPlanificada getPartidaPlanificada() {
-        return partidaPlanificada;
-    }
-
-    public void setPartidaPlanificada(PartidaPlanificada partidaPlanificada) {
-        this.partidaPlanificada = partidaPlanificada;
-    }
+   
 }
