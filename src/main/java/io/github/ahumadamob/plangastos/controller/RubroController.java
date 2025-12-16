@@ -26,38 +26,40 @@ import org.springframework.web.bind.annotation.RestController;
 public class RubroController {
 
     private final RubroService service;
+    private final RubroMapper mapper;
 
-    public RubroController(RubroService service) {
+    public RubroController(RubroService service, RubroMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
     public ResponseEntity<ApiResponseSuccessDto<List<RubroResponseDto>>> getAll() {
         List<RubroResponseDto> data = service.getAll().stream()
-                .map(RubroMapper::entityToResponse)
+                .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de rubros"));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<RubroResponseDto>> getById(@PathVariable Long id) {
-        RubroResponseDto data = RubroMapper.entityToResponse(service.getById(id));
+        RubroResponseDto data = mapper.entityToResponse(service.getById(id));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Detalle de rubro"));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponseSuccessDto<RubroResponseDto>> create(
             @RequestBody RubroRequestDto request) {
-        RubroResponseDto data = RubroMapper.entityToResponse(
-                service.create(RubroMapper.requestToEntity(request)));
+        RubroResponseDto data = mapper.entityToResponse(
+                service.create(mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Rubro creado"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<RubroResponseDto>> update(
             @PathVariable Long id, @RequestBody RubroRequestDto request) {
-        RubroResponseDto data = RubroMapper.entityToResponse(
-                service.update(id, RubroMapper.requestToEntity(request)));
+        RubroResponseDto data = mapper.entityToResponse(
+                service.update(id, mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Rubro actualizado"));
     }
 

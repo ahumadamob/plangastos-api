@@ -1,25 +1,34 @@
 package io.github.ahumadamob.plangastos.mapper;
 
+import org.springframework.stereotype.Component;
+
 import io.github.ahumadamob.plangastos.dto.TransaccionRequestDto;
 import io.github.ahumadamob.plangastos.dto.TransaccionResponseDto;
 import io.github.ahumadamob.plangastos.entity.Transaccion;
 
+@Component
 public class TransaccionMapper {
 
-    public static Transaccion requestToEntity(TransaccionRequestDto request) {
+    private final MapperHelper mapperHelper;
+
+    public TransaccionMapper(MapperHelper mapperHelper) {
+        this.mapperHelper = mapperHelper;
+    }
+
+    public Transaccion requestToEntity(TransaccionRequestDto request) {
         Transaccion transaccion = new Transaccion();
-        transaccion.setPresupuesto(request.getPresupuesto());
-        transaccion.setRubro(request.getRubro());
+        transaccion.setPresupuesto(mapperHelper.getPresupuesto(request.getPresupuesto_id()));
+        transaccion.setRubro(mapperHelper.getRubro(request.getRubro_id()));
         transaccion.setDescripcion(request.getDescripcion());
-        transaccion.setCuenta(request.getCuenta());
+        transaccion.setCuenta(mapperHelper.getCuentaFinanciera(request.getCuentaFinanciera_id()));
         transaccion.setFecha(request.getFecha());
         transaccion.setMonto(request.getMonto());
         transaccion.setReferenciaExterna(request.getReferenciaExterna());
-        transaccion.setPartidaPlanificada(request.getPartidaPlanificada());
+        transaccion.setPartidaPlanificada(mapperHelper.getPartidaPlanificada(request.getPartidaPlanificada_id()));
         return transaccion;
     }
 
-    public static TransaccionResponseDto entityToResponse(Transaccion transaccion) {
+    public TransaccionResponseDto entityToResponse(Transaccion transaccion) {
         TransaccionResponseDto response = new TransaccionResponseDto();
         response.setId(transaccion.getId());
         response.setPresupuesto(transaccion.getPresupuesto());

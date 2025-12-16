@@ -26,15 +26,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class PartidaPlanificadaController {
 
     private final PartidaPlanificadaService service;
+    private final PartidaPlanificadaMapper mapper;
 
-    public PartidaPlanificadaController(PartidaPlanificadaService service) {
+    public PartidaPlanificadaController(PartidaPlanificadaService service, PartidaPlanificadaMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
     public ResponseEntity<ApiResponseSuccessDto<List<PartidaPlanificadaResponseDto>>> getAll() {
         List<PartidaPlanificadaResponseDto> data = service.getAll().stream()
-                .map(PartidaPlanificadaMapper::entityToResponse)
+                .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de partidas planificadas"));
     }
@@ -42,23 +44,23 @@ public class PartidaPlanificadaController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<PartidaPlanificadaResponseDto>> getById(
             @PathVariable Long id) {
-        PartidaPlanificadaResponseDto data = PartidaPlanificadaMapper.entityToResponse(service.getById(id));
+        PartidaPlanificadaResponseDto data = mapper.entityToResponse(service.getById(id));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Detalle de partida planificada"));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponseSuccessDto<PartidaPlanificadaResponseDto>> create(
             @RequestBody PartidaPlanificadaRequestDto request) {
-        PartidaPlanificadaResponseDto data = PartidaPlanificadaMapper.entityToResponse(
-                service.create(PartidaPlanificadaMapper.requestToEntity(request)));
+        PartidaPlanificadaResponseDto data = mapper.entityToResponse(
+                service.create(mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Partida planificada creada"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<PartidaPlanificadaResponseDto>> update(
             @PathVariable Long id, @RequestBody PartidaPlanificadaRequestDto request) {
-        PartidaPlanificadaResponseDto data = PartidaPlanificadaMapper.entityToResponse(
-                service.update(id, PartidaPlanificadaMapper.requestToEntity(request)));
+        PartidaPlanificadaResponseDto data = mapper.entityToResponse(
+                service.update(id, mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Partida planificada actualizada"));
     }
 

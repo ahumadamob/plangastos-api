@@ -1,8 +1,4 @@
 package io.github.ahumadamob.plangastos.dto;
-import io.github.ahumadamob.plangastos.entity.NaturalezaMovimiento;
-import io.github.ahumadamob.plangastos.entity.Rubro;
-import io.github.ahumadamob.plangastos.entity.Usuario;
-
 public class RubroRequestDto {
 
     private Long usuario_id;

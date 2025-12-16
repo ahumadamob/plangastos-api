@@ -1,7 +1,4 @@
 package io.github.ahumadamob.plangastos.dto;
-import io.github.ahumadamob.plangastos.entity.Divisa;
-import io.github.ahumadamob.plangastos.entity.Usuario;
-
 public class PlanPresupuestarioRequestDto {
 
     private Long usuario_id;

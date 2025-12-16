@@ -1,22 +1,31 @@
 package io.github.ahumadamob.plangastos.mapper;
 
+import org.springframework.stereotype.Component;
+
 import io.github.ahumadamob.plangastos.dto.RubroRequestDto;
 import io.github.ahumadamob.plangastos.dto.RubroResponseDto;
 import io.github.ahumadamob.plangastos.entity.Rubro;
 
+@Component
 public class RubroMapper {
 
-    public static Rubro requestToEntity(RubroRequestDto request) {
+    private final MapperHelper mapperHelper;
+
+    public RubroMapper(MapperHelper mapperHelper) {
+        this.mapperHelper = mapperHelper;
+    }
+
+    public Rubro requestToEntity(RubroRequestDto request) {
         Rubro rubro = new Rubro();
-        rubro.setUsuario(request.getUsuario());
-        rubro.setNaturaleza(request.getNaturaleza());
+        rubro.setUsuario(mapperHelper.getUsuario(request.getUsuario_id()));
+        rubro.setNaturaleza(mapperHelper.getNaturalezaMovimiento(request.getNaturalezaMovimiento_id()));
         rubro.setNombre(request.getNombre());
-        rubro.setParent(request.getParent());
+        rubro.setParent(mapperHelper.getRubro(request.getRubro_id()));
         rubro.setActivo(request.getActivo());
         return rubro;
     }
 
-    public static RubroResponseDto entityToResponse(Rubro rubro) {
+    public RubroResponseDto entityToResponse(Rubro rubro) {
         RubroResponseDto response = new RubroResponseDto();
         response.setId(rubro.getId());
         response.setUsuario(rubro.getUsuario());
