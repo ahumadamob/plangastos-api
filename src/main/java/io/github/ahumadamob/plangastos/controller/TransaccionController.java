@@ -26,38 +26,40 @@ import org.springframework.web.bind.annotation.RestController;
 public class TransaccionController {
 
     private final TransaccionService service;
+    private final TransaccionMapper mapper;
 
-    public TransaccionController(TransaccionService service) {
+    public TransaccionController(TransaccionService service, TransaccionMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
     public ResponseEntity<ApiResponseSuccessDto<List<TransaccionResponseDto>>> getAll() {
         List<TransaccionResponseDto> data = service.getAll().stream()
-                .map(TransaccionMapper::entityToResponse)
+                .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de transacciones"));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<TransaccionResponseDto>> getById(@PathVariable Long id) {
-        TransaccionResponseDto data = TransaccionMapper.entityToResponse(service.getById(id));
+        TransaccionResponseDto data = mapper.entityToResponse(service.getById(id));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Detalle de transacción"));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponseSuccessDto<TransaccionResponseDto>> create(
             @RequestBody TransaccionRequestDto request) {
-        TransaccionResponseDto data = TransaccionMapper.entityToResponse(
-                service.create(TransaccionMapper.requestToEntity(request)));
+        TransaccionResponseDto data = mapper.entityToResponse(
+                service.create(mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Transacción creada"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<TransaccionResponseDto>> update(
             @PathVariable Long id, @RequestBody TransaccionRequestDto request) {
-        TransaccionResponseDto data = TransaccionMapper.entityToResponse(
-                service.update(id, TransaccionMapper.requestToEntity(request)));
+        TransaccionResponseDto data = mapper.entityToResponse(
+                service.update(id, mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Transacción actualizada"));
     }
 

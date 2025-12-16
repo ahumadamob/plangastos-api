@@ -2,9 +2,6 @@ package io.github.ahumadamob.plangastos.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import io.github.ahumadamob.plangastos.entity.Presupuesto;
-import io.github.ahumadamob.plangastos.entity.Rubro;
-
 public class PartidaPlanificadaRequestDto {
 
     private Long presupuesto_id;

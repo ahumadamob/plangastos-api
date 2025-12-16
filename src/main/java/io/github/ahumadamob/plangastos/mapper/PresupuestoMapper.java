@@ -1,23 +1,32 @@
 package io.github.ahumadamob.plangastos.mapper;
 
+import org.springframework.stereotype.Component;
+
 import io.github.ahumadamob.plangastos.dto.PresupuestoRequestDto;
 import io.github.ahumadamob.plangastos.dto.PresupuestoResponseDto;
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
 
+@Component
 public class PresupuestoMapper {
 
-    public static Presupuesto requestToEntity(PresupuestoRequestDto request) {
+    private final MapperHelper mapperHelper;
+
+    public PresupuestoMapper(MapperHelper mapperHelper) {
+        this.mapperHelper = mapperHelper;
+    }
+
+    public Presupuesto requestToEntity(PresupuestoRequestDto request) {
         Presupuesto presupuesto = new Presupuesto();
-        presupuesto.setPlan(request.getPlan());
+        presupuesto.setPlan(mapperHelper.getPlanPresupuestario(request.getPlanPresupuestario_id()));
         presupuesto.setNombre(request.getNombre());
         presupuesto.setCodigo(request.getCodigo());
         presupuesto.setFechaDesde(request.getFechaDesde());
         presupuesto.setFechaHasta(request.getFechaHasta());
-        presupuesto.setPresupuestoOrigen(request.getPresupuestoOrigen());
+        presupuesto.setPresupuestoOrigen(mapperHelper.getPresupuesto(request.getPresupuestoOrigen_id()));
         return presupuesto;
     }
 
-    public static PresupuestoResponseDto entityToResponse(Presupuesto presupuesto) {
+    public PresupuestoResponseDto entityToResponse(Presupuesto presupuesto) {
         PresupuestoResponseDto response = new PresupuestoResponseDto();
         response.setId(presupuesto.getId());
         response.setPlan(presupuesto.getPlan());

@@ -26,15 +26,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class CuentaFinancieraController {
 
     private final CuentaFinancieraService service;
+    private final CuentaFinancieraMapper mapper;
 
-    public CuentaFinancieraController(CuentaFinancieraService service) {
+    public CuentaFinancieraController(CuentaFinancieraService service, CuentaFinancieraMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
     public ResponseEntity<ApiResponseSuccessDto<List<CuentaFinancieraResponseDto>>> getAll() {
         List<CuentaFinancieraResponseDto> data = service.getAll().stream()
-                .map(CuentaFinancieraMapper::entityToResponse)
+                .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de cuentas financieras"));
     }
@@ -42,23 +44,23 @@ public class CuentaFinancieraController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<CuentaFinancieraResponseDto>> getById(
             @PathVariable Long id) {
-        CuentaFinancieraResponseDto data = CuentaFinancieraMapper.entityToResponse(service.getById(id));
+        CuentaFinancieraResponseDto data = mapper.entityToResponse(service.getById(id));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Detalle de cuenta financiera"));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponseSuccessDto<CuentaFinancieraResponseDto>> create(
             @RequestBody CuentaFinancieraRequestDto request) {
-        CuentaFinancieraResponseDto data = CuentaFinancieraMapper.entityToResponse(
-                service.create(CuentaFinancieraMapper.requestToEntity(request)));
+        CuentaFinancieraResponseDto data = mapper.entityToResponse(
+                service.create(mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Cuenta financiera creada"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<CuentaFinancieraResponseDto>> update(
             @PathVariable Long id, @RequestBody CuentaFinancieraRequestDto request) {
-        CuentaFinancieraResponseDto data = CuentaFinancieraMapper.entityToResponse(
-                service.update(id, CuentaFinancieraMapper.requestToEntity(request)));
+        CuentaFinancieraResponseDto data = mapper.entityToResponse(
+                service.update(id, mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Cuenta financiera actualizada"));
     }
 

@@ -1,9 +1,6 @@
 package io.github.ahumadamob.plangastos.dto;
 import java.time.LocalDate;
 
-import io.github.ahumadamob.plangastos.entity.PlanPresupuestario;
-import io.github.ahumadamob.plangastos.entity.Presupuesto;
-
 public class PresupuestoRequestDto {
 
     private Long planPresupuestario_id;
@@ -11,7 +8,7 @@ public class PresupuestoRequestDto {
     private String codigo;
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
-    private Presupuesto presupuestoOrigen;
+    private Long presupuestoOrigen_id;
     
 	public Long getPlanPresupuestario_id() {
 		return planPresupuestario_id;
@@ -43,12 +40,12 @@ public class PresupuestoRequestDto {
 	public void setFechaHasta(LocalDate fechaHasta) {
 		this.fechaHasta = fechaHasta;
 	}
-	public Presupuesto getPresupuestoOrigen() {
-		return presupuestoOrigen;
-	}
-	public void setPresupuestoOrigen(Presupuesto presupuestoOrigen) {
-		this.presupuestoOrigen = presupuestoOrigen;
-	}
+        public Long getPresupuestoOrigen_id() {
+                return presupuestoOrigen_id;
+        }
+        public void setPresupuestoOrigen_id(Long presupuestoOrigen_id) {
+                this.presupuestoOrigen_id = presupuestoOrigen_id;
+        }
 
     
 }

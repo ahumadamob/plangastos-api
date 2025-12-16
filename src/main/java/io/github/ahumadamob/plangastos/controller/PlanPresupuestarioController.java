@@ -26,15 +26,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class PlanPresupuestarioController {
 
     private final PlanPresupuestarioService service;
+    private final PlanPresupuestarioMapper mapper;
 
-    public PlanPresupuestarioController(PlanPresupuestarioService service) {
+    public PlanPresupuestarioController(PlanPresupuestarioService service, PlanPresupuestarioMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
     public ResponseEntity<ApiResponseSuccessDto<List<PlanPresupuestarioResponseDto>>> getAll() {
         List<PlanPresupuestarioResponseDto> data = service.getAll().stream()
-                .map(PlanPresupuestarioMapper::entityToResponse)
+                .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de planes presupuestarios"));
     }
@@ -42,23 +44,23 @@ public class PlanPresupuestarioController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<PlanPresupuestarioResponseDto>> getById(
             @PathVariable Long id) {
-        PlanPresupuestarioResponseDto data = PlanPresupuestarioMapper.entityToResponse(service.getById(id));
+        PlanPresupuestarioResponseDto data = mapper.entityToResponse(service.getById(id));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Detalle de plan presupuestario"));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponseSuccessDto<PlanPresupuestarioResponseDto>> create(
             @RequestBody PlanPresupuestarioRequestDto request) {
-        PlanPresupuestarioResponseDto data = PlanPresupuestarioMapper.entityToResponse(
-                service.create(PlanPresupuestarioMapper.requestToEntity(request)));
+        PlanPresupuestarioResponseDto data = mapper.entityToResponse(
+                service.create(mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Plan presupuestario creado"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<PlanPresupuestarioResponseDto>> update(
             @PathVariable Long id, @RequestBody PlanPresupuestarioRequestDto request) {
-        PlanPresupuestarioResponseDto data = PlanPresupuestarioMapper.entityToResponse(
-                service.update(id, PlanPresupuestarioMapper.requestToEntity(request)));
+        PlanPresupuestarioResponseDto data = mapper.entityToResponse(
+                service.update(id, mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Plan presupuestario actualizado"));
     }
 

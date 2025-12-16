@@ -26,38 +26,40 @@ import org.springframework.web.bind.annotation.RestController;
 public class PresupuestoController {
 
     private final PresupuestoService service;
+    private final PresupuestoMapper mapper;
 
-    public PresupuestoController(PresupuestoService service) {
+    public PresupuestoController(PresupuestoService service, PresupuestoMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
     public ResponseEntity<ApiResponseSuccessDto<List<PresupuestoResponseDto>>> getAll() {
         List<PresupuestoResponseDto> data = service.getAll().stream()
-                .map(PresupuestoMapper::entityToResponse)
+                .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de presupuestos"));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<PresupuestoResponseDto>> getById(@PathVariable Long id) {
-        PresupuestoResponseDto data = PresupuestoMapper.entityToResponse(service.getById(id));
+        PresupuestoResponseDto data = mapper.entityToResponse(service.getById(id));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Detalle de presupuesto"));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponseSuccessDto<PresupuestoResponseDto>> create(
             @RequestBody PresupuestoRequestDto request) {
-        PresupuestoResponseDto data = PresupuestoMapper.entityToResponse(
-                service.create(PresupuestoMapper.requestToEntity(request)));
+        PresupuestoResponseDto data = mapper.entityToResponse(
+                service.create(mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Presupuesto creado"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<PresupuestoResponseDto>> update(
             @PathVariable Long id, @RequestBody PresupuestoRequestDto request) {
-        PresupuestoResponseDto data = PresupuestoMapper.entityToResponse(
-                service.update(id, PresupuestoMapper.requestToEntity(request)));
+        PresupuestoResponseDto data = mapper.entityToResponse(
+                service.update(id, mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Presupuesto actualizado"));
     }
 

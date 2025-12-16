@@ -1,22 +1,31 @@
 package io.github.ahumadamob.plangastos.mapper;
 
+import org.springframework.stereotype.Component;
+
 import io.github.ahumadamob.plangastos.dto.PartidaPlanificadaRequestDto;
 import io.github.ahumadamob.plangastos.dto.PartidaPlanificadaResponseDto;
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
 
+@Component
 public class PartidaPlanificadaMapper {
 
-    public static PartidaPlanificada requestToEntity(PartidaPlanificadaRequestDto request) {
+    private final MapperHelper mapperHelper;
+
+    public PartidaPlanificadaMapper(MapperHelper mapperHelper) {
+        this.mapperHelper = mapperHelper;
+    }
+
+    public PartidaPlanificada requestToEntity(PartidaPlanificadaRequestDto request) {
         PartidaPlanificada partida = new PartidaPlanificada();
-        partida.setPresupuesto(request.getPresupuesto());
-        partida.setRubro(request.getRubro());
+        partida.setPresupuesto(mapperHelper.getPresupuesto(request.getPresupuesto_id()));
+        partida.setRubro(mapperHelper.getRubro(request.getRubro_id()));
         partida.setDescripcion(request.getDescripcion());
         partida.setMontoComprometido(request.getMontoComprometido());
         partida.setFechaObjetivo(request.getFechaObjetivo());
         return partida;
     }
 
-    public static PartidaPlanificadaResponseDto entityToResponse(PartidaPlanificada partida) {
+    public PartidaPlanificadaResponseDto entityToResponse(PartidaPlanificada partida) {
         PartidaPlanificadaResponseDto response = new PartidaPlanificadaResponseDto();
         response.setId(partida.getId());
         response.setPresupuesto(partida.getPresupuesto());

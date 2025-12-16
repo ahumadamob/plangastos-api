@@ -1,19 +1,25 @@
 package io.github.ahumadamob.plangastos.mapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import io.github.ahumadamob.plangastos.dto.CuentaFinancieraRequestDto;
 import io.github.ahumadamob.plangastos.dto.CuentaFinancieraResponseDto;
 import io.github.ahumadamob.plangastos.entity.CuentaFinanciera;
-import io.github.ahumadamob.plangastos.service.CuentaFinancieraService;
-import io.github.ahumadamob.plangastos.service.DivisaService;
-import io.github.ahumadamob.plangastos.service.UsuarioService;
 
+@Component
 public class CuentaFinancieraMapper {
-	
-    public static CuentaFinanciera requestToEntity(CuentaFinancieraRequestDto request) {
+
+    private final MapperHelper mapperHelper;
+
+    public CuentaFinancieraMapper(MapperHelper mapperHelper) {
+        this.mapperHelper = mapperHelper;
+    }
+
+    public CuentaFinanciera requestToEntity(CuentaFinancieraRequestDto request) {
         CuentaFinanciera cuentaFinanciera = new CuentaFinanciera();
 
+        cuentaFinanciera.setUsuario(mapperHelper.getUsuario(request.getUsuario_id()));
+        cuentaFinanciera.setDivisa(mapperHelper.getDivisa(request.getDivisa_id()));
         cuentaFinanciera.setNombre(request.getNombre());
         cuentaFinanciera.setTipo(request.getTipo());
         cuentaFinanciera.setSaldoInicial(request.getSaldoInicial());
@@ -21,7 +27,7 @@ public class CuentaFinancieraMapper {
         return cuentaFinanciera;
     }
 
-    public static CuentaFinancieraResponseDto entityToResponse(CuentaFinanciera cuentaFinanciera) {
+    public CuentaFinancieraResponseDto entityToResponse(CuentaFinanciera cuentaFinanciera) {
         CuentaFinancieraResponseDto response = new CuentaFinancieraResponseDto();
         response.setId(cuentaFinanciera.getId());
         response.setUsuario(cuentaFinanciera.getUsuario());
