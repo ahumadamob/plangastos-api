@@ -1,5 +1,4 @@
 package io.github.ahumadamob.plangastos.dto;
-
 import java.time.LocalDate;
 
 import io.github.ahumadamob.plangastos.entity.PlanPresupuestario;
