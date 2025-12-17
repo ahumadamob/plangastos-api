@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "NaturalezaMovimiento")
+@Tag(name = "Naturaleza movimiento")
 @RestController
 @RequestMapping("/api/v1/naturaleza-movimiento")
 public class NaturalezaMovimientoController {
