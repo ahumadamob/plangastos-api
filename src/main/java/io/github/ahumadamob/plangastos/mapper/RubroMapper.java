@@ -17,10 +17,8 @@ public class RubroMapper {
 
     public Rubro requestToEntity(RubroRequestDto request) {
         Rubro rubro = new Rubro();
-        rubro.setUsuario(mapperHelper.getUsuario(request.getUsuario_id()));
         rubro.setNaturaleza(mapperHelper.getNaturalezaMovimiento(request.getNaturalezaMovimiento_id()));
         rubro.setNombre(request.getNombre());
-        rubro.setParent(mapperHelper.getRubro(request.getRubro_id()));
         rubro.setActivo(request.getActivo());
         return rubro;
     }

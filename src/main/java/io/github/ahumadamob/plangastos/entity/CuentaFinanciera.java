@@ -17,9 +17,8 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = "cuentas_financieras")
 public class CuentaFinanciera extends BaseEntity {
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "usuario_id", nullable = true)
     private Usuario usuario;
 
     @NotNull
