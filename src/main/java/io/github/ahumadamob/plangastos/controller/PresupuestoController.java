@@ -1,6 +1,7 @@
 package io.github.ahumadamob.plangastos.controller;
 
 import io.github.ahumadamob.plangastos.dto.PresupuestoRequestDto;
+import io.github.ahumadamob.plangastos.dto.PresupuestoDropdownDto;
 import io.github.ahumadamob.plangastos.dto.PresupuestoResponseDto;
 import io.github.ahumadamob.plangastos.dto.common.ApiResponseSuccessDto;
 import io.github.ahumadamob.plangastos.mapper.PresupuestoMapper;
@@ -39,6 +40,14 @@ public class PresupuestoController {
                 .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de presupuestos"));
+    }
+
+    @GetMapping("/dropdown")
+    public ResponseEntity<ApiResponseSuccessDto<List<PresupuestoDropdownDto>>> getDropdown() {
+        List<PresupuestoDropdownDto> data = service.getAllOrderByFechaDesdeDesc().stream()
+                .map(mapper::entityToDropdownDto)
+                .toList();
+        return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de presupuestos para dropdown"));
     }
 
     @GetMapping("/{id}")

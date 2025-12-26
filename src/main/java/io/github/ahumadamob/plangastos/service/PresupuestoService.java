@@ -7,6 +7,8 @@ public interface PresupuestoService {
 
     List<Presupuesto> getAll();
 
+    List<Presupuesto> getAllOrderByFechaDesdeDesc();
+
     Presupuesto getById(Long id);
 
     Presupuesto create(Presupuesto presupuesto);
