@@ -14,4 +14,10 @@ public interface PartidaPlanificadaService {
     PartidaPlanificada update(Long id, PartidaPlanificada partidaPlanificada);
 
     void delete(Long id);
+
+    List<PartidaPlanificada> getIngresosByPresupuestoId(Long presupuestoId);
+
+    List<PartidaPlanificada> getGastosByPresupuestoId(Long presupuestoId);
+
+    List<PartidaPlanificada> getAhorroByPresupuestoId(Long presupuestoId);
 }
