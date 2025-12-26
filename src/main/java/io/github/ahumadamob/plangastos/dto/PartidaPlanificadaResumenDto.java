@@ -4,21 +4,17 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import io.github.ahumadamob.plangastos.entity.CuentaFinanciera;
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
 import io.github.ahumadamob.plangastos.entity.Rubro;
 
-public class TransaccionResponseDto {
+public class PartidaPlanificadaResumenDto {
 
     private Long id;
     private Presupuesto presupuesto;
     private Rubro rubro;
     private String descripcion;
-    private CuentaFinanciera cuenta;
-    private LocalDate fecha;
-    private BigDecimal monto;
-    private String referenciaExterna;
-    private PartidaPlanificadaResumenDto partidaPlanificada;
+    private BigDecimal montoComprometido;
+    private LocalDate fechaObjetivo;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -54,44 +50,20 @@ public class TransaccionResponseDto {
         this.descripcion = descripcion;
     }
 
-    public CuentaFinanciera getCuenta() {
-        return cuenta;
+    public BigDecimal getMontoComprometido() {
+        return montoComprometido;
     }
 
-    public void setCuenta(CuentaFinanciera cuenta) {
-        this.cuenta = cuenta;
+    public void setMontoComprometido(BigDecimal montoComprometido) {
+        this.montoComprometido = montoComprometido;
     }
 
-    public LocalDate getFecha() {
-        return fecha;
+    public LocalDate getFechaObjetivo() {
+        return fechaObjetivo;
     }
 
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
-
-    public BigDecimal getMonto() {
-        return monto;
-    }
-
-    public void setMonto(BigDecimal monto) {
-        this.monto = monto;
-    }
-
-    public String getReferenciaExterna() {
-        return referenciaExterna;
-    }
-
-    public void setReferenciaExterna(String referenciaExterna) {
-        this.referenciaExterna = referenciaExterna;
-    }
-
-    public PartidaPlanificadaResumenDto getPartidaPlanificada() {
-        return partidaPlanificada;
-    }
-
-    public void setPartidaPlanificada(PartidaPlanificadaResumenDto partidaPlanificada) {
-        this.partidaPlanificada = partidaPlanificada;
+    public void setFechaObjetivo(LocalDate fechaObjetivo) {
+        this.fechaObjetivo = fechaObjetivo;
     }
 
     public LocalDateTime getCreatedAt() {
