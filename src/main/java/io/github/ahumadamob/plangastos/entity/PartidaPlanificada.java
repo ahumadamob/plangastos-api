@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,6 +24,7 @@ public class PartidaPlanificada extends RegistroPresupuesto {
 
     private LocalDate fechaObjetivo;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "partidaPlanificada", fetch = FetchType.LAZY)
     private List<Transaccion> transacciones = new ArrayList<>();
 
