@@ -1,5 +1,6 @@
 package io.github.ahumadamob.plangastos.service.jpa;
 
+import io.github.ahumadamob.plangastos.entity.NaturalezaMovimiento;
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
 import io.github.ahumadamob.plangastos.repository.PartidaPlanificadaRepository;
 import io.github.ahumadamob.plangastos.service.PartidaPlanificadaService;
@@ -39,5 +40,23 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
     @Override
     public void delete(Long id) {
         partidaPlanificadaRepository.deleteById(id);
+    }
+
+    @Override
+    public List<PartidaPlanificada> getIngresosByPresupuestoId(Long presupuestoId) {
+        return partidaPlanificadaRepository.findByPresupuestoIdAndRubroNaturaleza(
+                presupuestoId, NaturalezaMovimiento.INGRESO);
+    }
+
+    @Override
+    public List<PartidaPlanificada> getGastosByPresupuestoId(Long presupuestoId) {
+        return partidaPlanificadaRepository.findByPresupuestoIdAndRubroNaturaleza(
+                presupuestoId, NaturalezaMovimiento.GASTO);
+    }
+
+    @Override
+    public List<PartidaPlanificada> getAhorroByPresupuestoId(Long presupuestoId) {
+        return partidaPlanificadaRepository.findByPresupuestoIdAndRubroNaturaleza(
+                presupuestoId, NaturalezaMovimiento.RESERVA_AHORRO);
     }
 }

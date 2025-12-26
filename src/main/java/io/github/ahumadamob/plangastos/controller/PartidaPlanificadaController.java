@@ -33,6 +33,33 @@ public class PartidaPlanificadaController {
         this.mapper = mapper;
     }
 
+    @GetMapping("/{presupuesto_id}/ingresos")
+    public ResponseEntity<ApiResponseSuccessDto<List<PartidaPlanificadaResponseDto>>> getIngresosByPresupuesto(
+            @PathVariable("presupuesto_id") Long presupuestoId) {
+        List<PartidaPlanificadaResponseDto> data = service.getIngresosByPresupuestoId(presupuestoId).stream()
+                .map(mapper::entityToResponse)
+                .toList();
+        return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de ingresos planificados por presupuesto"));
+    }
+
+    @GetMapping("/{presupuesto_id}/gastos")
+    public ResponseEntity<ApiResponseSuccessDto<List<PartidaPlanificadaResponseDto>>> getGastosByPresupuesto(
+            @PathVariable("presupuesto_id") Long presupuestoId) {
+        List<PartidaPlanificadaResponseDto> data = service.getGastosByPresupuestoId(presupuestoId).stream()
+                .map(mapper::entityToResponse)
+                .toList();
+        return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de gastos planificados por presupuesto"));
+    }
+
+    @GetMapping("/{presupuesto_id}/ahorro")
+    public ResponseEntity<ApiResponseSuccessDto<List<PartidaPlanificadaResponseDto>>> getAhorroByPresupuesto(
+            @PathVariable("presupuesto_id") Long presupuestoId) {
+        List<PartidaPlanificadaResponseDto> data = service.getAhorroByPresupuestoId(presupuestoId).stream()
+                .map(mapper::entityToResponse)
+                .toList();
+        return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de ahorro planificado por presupuesto"));
+    }
+
     @GetMapping
     public ResponseEntity<ApiResponseSuccessDto<List<PartidaPlanificadaResponseDto>>> getAll() {
         List<PartidaPlanificadaResponseDto> data = service.getAll().stream()
