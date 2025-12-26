@@ -4,7 +4,9 @@ import org.springframework.stereotype.Component;
 
 import io.github.ahumadamob.plangastos.dto.PartidaPlanificadaRequestDto;
 import io.github.ahumadamob.plangastos.dto.PartidaPlanificadaResponseDto;
+import io.github.ahumadamob.plangastos.dto.PartidaPlanificadaTransaccionDto;
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
+import io.github.ahumadamob.plangastos.entity.Transaccion;
 
 @Component
 public class PartidaPlanificadaMapper {
@@ -33,9 +35,24 @@ public class PartidaPlanificadaMapper {
         response.setDescripcion(partida.getDescripcion());
         response.setMontoComprometido(partida.getMontoComprometido());
         response.setFechaObjetivo(partida.getFechaObjetivo());
-        response.setTransacciones(partida.getTransacciones());
+        response.setTransacciones(partida.getTransacciones().stream().map(this::mapTransaccion).toList());
         response.setCreatedAt(partida.getCreatedAt());
         response.setUpdatedAt(partida.getUpdatedAt());
         return response;
+    }
+
+    private PartidaPlanificadaTransaccionDto mapTransaccion(Transaccion transaccion) {
+        PartidaPlanificadaTransaccionDto dto = new PartidaPlanificadaTransaccionDto();
+        dto.setId(transaccion.getId());
+        dto.setPresupuesto(transaccion.getPresupuesto());
+        dto.setRubro(transaccion.getRubro());
+        dto.setDescripcion(transaccion.getDescripcion());
+        dto.setCuenta(transaccion.getCuenta());
+        dto.setFecha(transaccion.getFecha());
+        dto.setMonto(transaccion.getMonto());
+        dto.setReferenciaExterna(transaccion.getReferenciaExterna());
+        dto.setCreatedAt(transaccion.getCreatedAt());
+        dto.setUpdatedAt(transaccion.getUpdatedAt());
+        return dto;
     }
 }
