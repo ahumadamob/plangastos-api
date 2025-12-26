@@ -21,6 +21,11 @@ public class PresupuestoServiceJpa implements PresupuestoService {
     }
 
     @Override
+    public List<Presupuesto> getAllOrderByFechaDesdeDesc() {
+        return presupuestoRepository.findAllByOrderByFechaDesdeDesc();
+    }
+
+    @Override
     public Presupuesto getById(Long id) {
         return presupuestoRepository.findById(id).orElse(null);
     }

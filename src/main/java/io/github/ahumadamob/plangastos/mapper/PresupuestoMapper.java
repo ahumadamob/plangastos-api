@@ -2,6 +2,7 @@ package io.github.ahumadamob.plangastos.mapper;
 
 import org.springframework.stereotype.Component;
 
+import io.github.ahumadamob.plangastos.dto.PresupuestoDropdownDto;
 import io.github.ahumadamob.plangastos.dto.PresupuestoRequestDto;
 import io.github.ahumadamob.plangastos.dto.PresupuestoResponseDto;
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
@@ -38,5 +39,12 @@ public class PresupuestoMapper {
         response.setCreatedAt(presupuesto.getCreatedAt());
         response.setUpdatedAt(presupuesto.getUpdatedAt());
         return response;
+    }
+
+    public PresupuestoDropdownDto entityToDropdownDto(Presupuesto presupuesto) {
+        PresupuestoDropdownDto dropdownDto = new PresupuestoDropdownDto();
+        dropdownDto.setId(presupuesto.getId());
+        dropdownDto.setNombre(presupuesto.getNombre());
+        return dropdownDto;
     }
 }
