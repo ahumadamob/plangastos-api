@@ -3,9 +3,11 @@ package io.github.ahumadamob.plangastos.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
 import io.github.ahumadamob.plangastos.entity.Rubro;
+import io.github.ahumadamob.plangastos.entity.Transaccion;
 
 public class PartidaPlanificadaResponseDto {
 
@@ -15,6 +17,7 @@ public class PartidaPlanificadaResponseDto {
     private String descripcion;
     private BigDecimal montoComprometido;
     private LocalDate fechaObjetivo;
+    private List<Transaccion> transacciones;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -72,6 +75,14 @@ public class PartidaPlanificadaResponseDto {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<Transaccion> getTransacciones() {
+        return transacciones;
+    }
+
+    public void setTransacciones(List<Transaccion> transacciones) {
+        this.transacciones = transacciones;
     }
 
     public LocalDateTime getUpdatedAt() {

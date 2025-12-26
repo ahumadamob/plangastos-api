@@ -33,6 +33,7 @@ public class PartidaPlanificadaMapper {
         response.setDescripcion(partida.getDescripcion());
         response.setMontoComprometido(partida.getMontoComprometido());
         response.setFechaObjetivo(partida.getFechaObjetivo());
+        response.setTransacciones(partida.getTransacciones());
         response.setCreatedAt(partida.getCreatedAt());
         response.setUpdatedAt(partida.getUpdatedAt());
         return response;
