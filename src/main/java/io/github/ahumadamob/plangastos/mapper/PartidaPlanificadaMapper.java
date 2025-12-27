@@ -24,6 +24,8 @@ public class PartidaPlanificadaMapper {
         partida.setDescripcion(request.getDescripcion());
         partida.setMontoComprometido(request.getMontoComprometido());
         partida.setFechaObjetivo(request.getFechaObjetivo());
+        partida.setCuotas(request.getCuotas());
+        partida.setCantidadCuotas(request.getCantidadCuotas());
         return partida;
     }
 
@@ -35,6 +37,9 @@ public class PartidaPlanificadaMapper {
         response.setDescripcion(partida.getDescripcion());
         response.setMontoComprometido(partida.getMontoComprometido());
         response.setFechaObjetivo(partida.getFechaObjetivo());
+        response.setConsolidado(partida.getConsolidado());
+        response.setCuotas(partida.getCuotas());
+        response.setCantidadCuotas(partida.getCantidadCuotas());
         response.setTransacciones(partida.getTransacciones().stream().map(this::mapTransaccion).toList());
         response.setCreatedAt(partida.getCreatedAt());
         response.setUpdatedAt(partida.getUpdatedAt());
