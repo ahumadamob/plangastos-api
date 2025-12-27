@@ -10,7 +10,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table(name = "partidas_planificadas")
@@ -22,8 +24,24 @@ public class PartidaPlanificada extends RegistroPresupuesto {
 
     private LocalDate fechaObjetivo;
 
+    private Boolean consolidado;
+
+    @Positive
+    private Integer cuotas;
+
+    @Positive
+    private Integer cantidadCuotas;
+
     @OneToMany(mappedBy = "partidaPlanificada", fetch = FetchType.LAZY)
     private List<Transaccion> transacciones = new ArrayList<>();
+
+    @AssertTrue(message = "cuotas no debe ser mayor a cantidadCuotas")
+    public boolean isCuotasValidas() {
+        if (cuotas == null || cantidadCuotas == null) {
+            return true;
+        }
+        return cuotas <= cantidadCuotas;
+    }
 
     public BigDecimal getMontoComprometido() {
         return montoComprometido;
@@ -39,6 +57,30 @@ public class PartidaPlanificada extends RegistroPresupuesto {
 
     public void setFechaObjetivo(LocalDate fechaObjetivo) {
         this.fechaObjetivo = fechaObjetivo;
+    }
+
+    public Boolean getConsolidado() {
+        return consolidado;
+    }
+
+    public void setConsolidado(Boolean consolidado) {
+        this.consolidado = consolidado;
+    }
+
+    public Integer getCuotas() {
+        return cuotas;
+    }
+
+    public void setCuotas(Integer cuotas) {
+        this.cuotas = cuotas;
+    }
+
+    public Integer getCantidadCuotas() {
+        return cantidadCuotas;
+    }
+
+    public void setCantidadCuotas(Integer cantidadCuotas) {
+        this.cantidadCuotas = cantidadCuotas;
     }
 
     public List<Transaccion> getTransacciones() {

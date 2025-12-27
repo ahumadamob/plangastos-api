@@ -2,6 +2,8 @@ package io.github.ahumadamob.plangastos.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import jakarta.validation.constraints.Positive;
+
 public class PartidaPlanificadaRequestDto {
 
     private Long presupuesto_id;
@@ -9,6 +11,10 @@ public class PartidaPlanificadaRequestDto {
     private String descripcion;
     private BigDecimal montoComprometido;
     private LocalDate fechaObjetivo;
+    @Positive
+    private Integer cuotas;
+    @Positive
+    private Integer cantidadCuotas;
     
 	public Long getPresupuesto_id() {
 		return presupuesto_id;
@@ -39,6 +45,18 @@ public class PartidaPlanificadaRequestDto {
 	}
 	public void setFechaObjetivo(LocalDate fechaObjetivo) {
 		this.fechaObjetivo = fechaObjetivo;
+	}
+	public Integer getCuotas() {
+		return cuotas;
+	}
+	public void setCuotas(Integer cuotas) {
+		this.cuotas = cuotas;
+	}
+	public Integer getCantidadCuotas() {
+		return cantidadCuotas;
+	}
+	public void setCantidadCuotas(Integer cantidadCuotas) {
+		this.cantidadCuotas = cantidadCuotas;
 	}
 
     
