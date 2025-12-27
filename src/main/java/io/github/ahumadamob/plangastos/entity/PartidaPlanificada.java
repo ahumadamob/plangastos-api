@@ -24,7 +24,7 @@ public class PartidaPlanificada extends RegistroPresupuesto {
 
     private LocalDate fechaObjetivo;
 
-    private Boolean consolidado;
+    private Boolean consolidado = Boolean.FALSE;
 
     @Positive
     private Integer cuotas;
