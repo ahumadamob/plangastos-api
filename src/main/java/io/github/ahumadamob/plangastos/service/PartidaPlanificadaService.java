@@ -20,4 +20,6 @@ public interface PartidaPlanificadaService {
     List<PartidaPlanificada> getGastosByPresupuestoId(Long presupuestoId);
 
     List<PartidaPlanificada> getAhorroByPresupuestoId(Long presupuestoId);
+
+    PartidaPlanificada consolidar(Long id);
 }

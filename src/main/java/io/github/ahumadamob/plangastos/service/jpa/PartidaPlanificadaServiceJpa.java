@@ -2,8 +2,11 @@ package io.github.ahumadamob.plangastos.service.jpa;
 
 import io.github.ahumadamob.plangastos.entity.NaturalezaMovimiento;
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
+import io.github.ahumadamob.plangastos.exception.ResourceNotFoundException;
 import io.github.ahumadamob.plangastos.repository.PartidaPlanificadaRepository;
+import io.github.ahumadamob.plangastos.repository.TransaccionRepository;
 import io.github.ahumadamob.plangastos.service.PartidaPlanificadaService;
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +14,12 @@ import org.springframework.stereotype.Service;
 public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
 
     private final PartidaPlanificadaRepository partidaPlanificadaRepository;
+    private final TransaccionRepository transaccionRepository;
 
-    public PartidaPlanificadaServiceJpa(PartidaPlanificadaRepository partidaPlanificadaRepository) {
+    public PartidaPlanificadaServiceJpa(
+            PartidaPlanificadaRepository partidaPlanificadaRepository, TransaccionRepository transaccionRepository) {
         this.partidaPlanificadaRepository = partidaPlanificadaRepository;
+        this.transaccionRepository = transaccionRepository;
     }
 
     @Override
@@ -58,5 +64,18 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
     public List<PartidaPlanificada> getAhorroByPresupuestoId(Long presupuestoId) {
         return partidaPlanificadaRepository.findByPresupuestoIdAndRubroNaturaleza(
                 presupuestoId, NaturalezaMovimiento.RESERVA_AHORRO);
+    }
+
+    @Override
+    public PartidaPlanificada consolidar(Long id) {
+        PartidaPlanificada partida = partidaPlanificadaRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Partida planificada no encontrada con id " + id));
+
+        BigDecimal montoTotal = transaccionRepository.sumMontoByPartidaPlanificadaId(id);
+        partida.setMontoComprometido(montoTotal);
+        partida.setConsolidado(Boolean.TRUE);
+
+        return partidaPlanificadaRepository.save(partida);
     }
 }
