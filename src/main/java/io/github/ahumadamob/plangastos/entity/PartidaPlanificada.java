@@ -27,8 +27,8 @@ public class PartidaPlanificada extends RegistroPresupuesto {
     private Boolean consolidado = Boolean.FALSE;
 
     @Positive
-    // Se mapea a la columna "cuotas" para mantener la nomenclatura en BD.
-    @Column(name = "cuotas")
+    // Se mapea a la columna "cuota" para mantener la nomenclatura en BD.
+    @Column(name = "cuota")
     private Integer cuota;
 
     @Positive
