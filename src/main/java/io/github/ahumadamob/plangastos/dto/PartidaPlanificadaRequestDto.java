@@ -12,7 +12,7 @@ public class PartidaPlanificadaRequestDto {
     private BigDecimal montoComprometido;
     private LocalDate fechaObjetivo;
     @Positive
-    private Integer cuotas;
+    private Integer cuota;
     @Positive
     private Integer cantidadCuotas;
     
@@ -46,11 +46,11 @@ public class PartidaPlanificadaRequestDto {
 	public void setFechaObjetivo(LocalDate fechaObjetivo) {
 		this.fechaObjetivo = fechaObjetivo;
 	}
-	public Integer getCuotas() {
-		return cuotas;
+	public Integer getCuota() {
+		return cuota;
 	}
-	public void setCuotas(Integer cuotas) {
-		this.cuotas = cuotas;
+	public void setCuota(Integer cuota) {
+		this.cuota = cuota;
 	}
 	public Integer getCantidadCuotas() {
 		return cantidadCuotas;
