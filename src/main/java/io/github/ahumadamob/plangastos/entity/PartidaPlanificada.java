@@ -27,7 +27,9 @@ public class PartidaPlanificada extends RegistroPresupuesto {
     private Boolean consolidado = Boolean.FALSE;
 
     @Positive
-    private Integer cuotas;
+    // Se mapea a la columna "cuota" para mantener la nomenclatura en BD.
+    @Column(name = "cuota")
+    private Integer cuota;
 
     @Positive
     private Integer cantidadCuotas;
@@ -35,12 +37,12 @@ public class PartidaPlanificada extends RegistroPresupuesto {
     @OneToMany(mappedBy = "partidaPlanificada", fetch = FetchType.LAZY)
     private List<Transaccion> transacciones = new ArrayList<>();
 
-    @AssertTrue(message = "cuotas no debe ser mayor a cantidadCuotas")
-    public boolean isCuotasValidas() {
-        if (cuotas == null || cantidadCuotas == null) {
+    @AssertTrue(message = "cuota no debe ser mayor a cantidadCuotas")
+    public boolean isCuotaValida() {
+        if (cuota == null || cantidadCuotas == null) {
             return true;
         }
-        return cuotas <= cantidadCuotas;
+        return cuota <= cantidadCuotas;
     }
 
     public BigDecimal getMontoComprometido() {
@@ -67,12 +69,12 @@ public class PartidaPlanificada extends RegistroPresupuesto {
         this.consolidado = consolidado;
     }
 
-    public Integer getCuotas() {
-        return cuotas;
+    public Integer getCuota() {
+        return cuota;
     }
 
-    public void setCuotas(Integer cuotas) {
-        this.cuotas = cuotas;
+    public void setCuota(Integer cuota) {
+        this.cuota = cuota;
     }
 
     public Integer getCantidadCuotas() {

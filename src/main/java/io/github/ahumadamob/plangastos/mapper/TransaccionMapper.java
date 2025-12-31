@@ -57,6 +57,7 @@ public class TransaccionMapper {
         dto.setDescripcion(partidaPlanificada.getDescripcion());
         dto.setMontoComprometido(partidaPlanificada.getMontoComprometido());
         dto.setFechaObjetivo(partidaPlanificada.getFechaObjetivo());
+        dto.setCuota(partidaPlanificada.getCuota());
         dto.setCreatedAt(partidaPlanificada.getCreatedAt());
         dto.setUpdatedAt(partidaPlanificada.getUpdatedAt());
         return dto;

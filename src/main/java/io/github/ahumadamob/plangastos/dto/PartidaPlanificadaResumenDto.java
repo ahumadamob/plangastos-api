@@ -16,7 +16,7 @@ public class PartidaPlanificadaResumenDto {
     private BigDecimal montoComprometido;
     private LocalDate fechaObjetivo;
     private Boolean consolidado;
-    private Integer cuotas;
+    private Integer cuota;
     private Integer cantidadCuotas;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -77,12 +77,12 @@ public class PartidaPlanificadaResumenDto {
         this.consolidado = consolidado;
     }
 
-    public Integer getCuotas() {
-        return cuotas;
+    public Integer getCuota() {
+        return cuota;
     }
 
-    public void setCuotas(Integer cuotas) {
-        this.cuotas = cuotas;
+    public void setCuota(Integer cuota) {
+        this.cuota = cuota;
     }
 
     public Integer getCantidadCuotas() {
