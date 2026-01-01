@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -74,22 +75,38 @@ public class PresupuestoServiceJpa implements PresupuestoService {
                 presupuestoOrigen.getFechaDesde(), nuevoPresupuesto.getFechaDesde());
 
         List<PartidaPlanificada> partidasCopiadas = partidasOrigen.stream()
-                .map(partidaOrigen -> {
-                    PartidaPlanificada partidaNueva = new PartidaPlanificada();
-                    partidaNueva.setPresupuesto(nuevoPresupuesto);
-                    partidaNueva.setRubro(partidaOrigen.getRubro());
-                    partidaNueva.setDescripcion(partidaOrigen.getDescripcion());
-                    partidaNueva.setMontoComprometido(partidaOrigen.getMontoComprometido());
-                    partidaNueva.setConsolidado(Boolean.FALSE);
-                    partidaNueva.setCuota(partidaOrigen.getCuota());
-                    partidaNueva.setCantidadCuotas(partidaOrigen.getCantidadCuotas());
-                    partidaNueva.setFechaObjetivo(ajustarFechaObjetivo(
-                            partidaOrigen.getFechaObjetivo(), mesesDiferencia));
-                    return partidaNueva;
-                })
+                .map(partidaOrigen -> crearPartidaCopiada(partidaOrigen, nuevoPresupuesto, mesesDiferencia))
+                .flatMap(Optional::stream)
                 .toList();
 
         partidaPlanificadaRepository.saveAll(partidasCopiadas);
+    }
+
+    private Optional<PartidaPlanificada> crearPartidaCopiada(
+            PartidaPlanificada partidaOrigen, Presupuesto nuevoPresupuesto, long mesesDiferencia) {
+        PartidaPlanificada partidaNueva = new PartidaPlanificada();
+        partidaNueva.setPresupuesto(nuevoPresupuesto);
+        partidaNueva.setRubro(partidaOrigen.getRubro());
+        partidaNueva.setDescripcion(partidaOrigen.getDescripcion());
+        partidaNueva.setMontoComprometido(partidaOrigen.getMontoComprometido());
+        partidaNueva.setConsolidado(Boolean.FALSE);
+        partidaNueva.setCantidadCuotas(partidaOrigen.getCantidadCuotas());
+        partidaNueva.setFechaObjetivo(ajustarFechaObjetivo(
+                partidaOrigen.getFechaObjetivo(), mesesDiferencia));
+
+        if (partidaOrigen.getCuota() != null && partidaOrigen.getCantidadCuotas() != null) {
+            Integer cuotaAjustada = ajustarCuota(partidaOrigen.getCuota(), mesesDiferencia);
+            if (cuotaAjustada == null
+                    || cuotaAjustada <= 0
+                    || cuotaAjustada > partidaOrigen.getCantidadCuotas()) {
+                return Optional.empty();
+            }
+            partidaNueva.setCuota(cuotaAjustada);
+        } else {
+            partidaNueva.setCuota(partidaOrigen.getCuota());
+        }
+
+        return Optional.of(partidaNueva);
     }
 
     private long calcularDiferenciaEnMeses(LocalDate fechaOrigen, LocalDate fechaNueva) {
@@ -106,5 +123,13 @@ public class PresupuestoServiceJpa implements PresupuestoService {
             return null;
         }
         return fechaObjetivo.plusMonths(mesesDiferencia);
+    }
+
+    private Integer ajustarCuota(Integer cuota, long mesesDiferencia) {
+        long cuotaAjustada = cuota + mesesDiferencia;
+        if (cuotaAjustada > Integer.MAX_VALUE || cuotaAjustada < Integer.MIN_VALUE) {
+            return null;
+        }
+        return Math.toIntExact(cuotaAjustada);
     }
 }
