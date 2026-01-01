@@ -18,7 +18,6 @@ public class PresupuestoMapper {
 
     public Presupuesto requestToEntity(PresupuestoRequestDto request) {
         Presupuesto presupuesto = new Presupuesto();
-        presupuesto.setPlan(mapperHelper.getPlanPresupuestario(request.getPlanPresupuestario_id()));
         presupuesto.setNombre(request.getNombre());
         presupuesto.setCodigo(request.getCodigo());
         presupuesto.setFechaDesde(request.getFechaDesde());
@@ -30,7 +29,6 @@ public class PresupuestoMapper {
     public PresupuestoResponseDto entityToResponse(Presupuesto presupuesto) {
         PresupuestoResponseDto response = new PresupuestoResponseDto();
         response.setId(presupuesto.getId());
-        response.setPlan(presupuesto.getPlan());
         response.setNombre(presupuesto.getNombre());
         response.setCodigo(presupuesto.getCodigo());
         response.setFechaDesde(presupuesto.getFechaDesde());
