@@ -7,7 +7,6 @@ import io.github.ahumadamob.plangastos.entity.CuentaFinanciera;
 import io.github.ahumadamob.plangastos.entity.Divisa;
 import io.github.ahumadamob.plangastos.entity.NaturalezaMovimiento;
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
-import io.github.ahumadamob.plangastos.entity.PlanPresupuestario;
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
 import io.github.ahumadamob.plangastos.entity.Rubro;
 import io.github.ahumadamob.plangastos.entity.Usuario;
@@ -15,7 +14,6 @@ import io.github.ahumadamob.plangastos.exception.ResourceNotFoundException;
 import io.github.ahumadamob.plangastos.repository.CuentaFinancieraRepository;
 import io.github.ahumadamob.plangastos.repository.DivisaRepository;
 import io.github.ahumadamob.plangastos.repository.PartidaPlanificadaRepository;
-import io.github.ahumadamob.plangastos.repository.PlanPresupuestarioRepository;
 import io.github.ahumadamob.plangastos.repository.PresupuestoRepository;
 import io.github.ahumadamob.plangastos.repository.RubroRepository;
 import io.github.ahumadamob.plangastos.repository.UsuarioRepository;
@@ -25,7 +23,6 @@ public class MapperHelper {
 
     private final UsuarioRepository usuarioRepository;
     private final DivisaRepository divisaRepository;
-    private final PlanPresupuestarioRepository planPresupuestarioRepository;
     private final PresupuestoRepository presupuestoRepository;
     private final RubroRepository rubroRepository;
     private final CuentaFinancieraRepository cuentaFinancieraRepository;
@@ -34,14 +31,12 @@ public class MapperHelper {
     public MapperHelper(
             UsuarioRepository usuarioRepository,
             DivisaRepository divisaRepository,
-            PlanPresupuestarioRepository planPresupuestarioRepository,
             PresupuestoRepository presupuestoRepository,
             RubroRepository rubroRepository,
             CuentaFinancieraRepository cuentaFinancieraRepository,
             PartidaPlanificadaRepository partidaPlanificadaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.divisaRepository = divisaRepository;
-        this.planPresupuestarioRepository = planPresupuestarioRepository;
         this.presupuestoRepository = presupuestoRepository;
         this.rubroRepository = rubroRepository;
         this.cuentaFinancieraRepository = cuentaFinancieraRepository;
@@ -54,10 +49,6 @@ public class MapperHelper {
 
     public Divisa getDivisa(Long divisaId) {
         return findOrThrow(divisaRepository, divisaId, "Divisa");
-    }
-
-    public PlanPresupuestario getPlanPresupuestario(Long planId) {
-        return findOrThrow(planPresupuestarioRepository, planId, "Plan presupuestario");
     }
 
     public Presupuesto getPresupuesto(Long presupuestoId) {

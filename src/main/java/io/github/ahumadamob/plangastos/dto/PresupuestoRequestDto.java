@@ -3,19 +3,12 @@ import java.time.LocalDate;
 
 public class PresupuestoRequestDto {
 
-    private Long planPresupuestario_id;
     private String nombre;
     private String codigo;
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
     private Long presupuestoOrigen_id;
     
-	public Long getPlanPresupuestario_id() {
-		return planPresupuestario_id;
-	}
-	public void setPlanPresupuestario_id(Long planPresupuestario_id) {
-		this.planPresupuestario_id = planPresupuestario_id;
-	}
 	public String getNombre() {
 		return nombre;
 	}

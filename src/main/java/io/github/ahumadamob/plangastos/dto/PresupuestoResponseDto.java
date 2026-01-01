@@ -3,13 +3,11 @@ package io.github.ahumadamob.plangastos.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import io.github.ahumadamob.plangastos.entity.PlanPresupuestario;
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
 
 public class PresupuestoResponseDto {
 
     private Long id;
-    private PlanPresupuestario plan;
     private String nombre;
     private String codigo;
     private LocalDate fechaDesde;
@@ -24,14 +22,6 @@ public class PresupuestoResponseDto {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public PlanPresupuestario getPlan() {
-        return plan;
-    }
-
-    public void setPlan(PlanPresupuestario plan) {
-        this.plan = plan;
     }
 
     public String getNombre() {
