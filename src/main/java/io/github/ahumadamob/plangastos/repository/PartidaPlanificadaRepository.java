@@ -12,4 +12,6 @@ public interface PartidaPlanificadaRepository extends JpaRepository<PartidaPlani
 
     List<PartidaPlanificada> findByPresupuestoIdAndRubroNaturaleza(
             Long presupuestoId, NaturalezaMovimiento naturalezaMovimiento);
+
+    List<PartidaPlanificada> findByPresupuestoId(Long presupuestoId);
 }
