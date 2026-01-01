@@ -134,7 +134,7 @@ class PresupuestoServiceJpaTest {
 
         List<PartidaPlanificada> partidasCopiadas = partidasCaptor.getValue();
         assertThat(partidasCopiadas).hasSize(1);
-        PartidaPlanificada copia = partidasCopiadas.getFirst();
+        PartidaPlanificada copia = partidasCopiadas.get(0);
 
         assertThat(copia.getDescripcion()).isEqualTo("Cuota valida");
         assertThat(copia.getCuota()).isEqualTo(4); // 1 + 3 meses
