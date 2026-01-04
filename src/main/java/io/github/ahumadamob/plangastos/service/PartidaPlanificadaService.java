@@ -1,6 +1,7 @@
 package io.github.ahumadamob.plangastos.service;
 
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface PartidaPlanificadaService {
@@ -22,4 +23,6 @@ public interface PartidaPlanificadaService {
     List<PartidaPlanificada> getAhorroByPresupuestoId(Long presupuestoId);
 
     PartidaPlanificada consolidar(Long id);
+
+    PartidaPlanificada actualizarMontoComprometido(Long id, BigDecimal montoComprometido, BigDecimal porcentaje);
 }
