@@ -1,20 +1,17 @@
 package io.github.ahumadamob.plangastos.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-import io.github.ahumadamob.plangastos.entity.Presupuesto;
-
-public class PresupuestoResponseDto {
+@Schema(name = "PresupuestoItem")
+public class PresupuestoItemDto {
 
     private Long id;
     private String nombre;
     private String codigo;
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
-    private Presupuesto presupuestoOrigen;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private PresupuestoOrigenDto presupuestoOrigen;
 
     public Long getId() {
         return id;
@@ -56,27 +53,11 @@ public class PresupuestoResponseDto {
         this.fechaHasta = fechaHasta;
     }
 
-    public Presupuesto getPresupuestoOrigen() {
+    public PresupuestoOrigenDto getPresupuestoOrigen() {
         return presupuestoOrigen;
     }
 
-    public void setPresupuestoOrigen(Presupuesto presupuestoOrigen) {
+    public void setPresupuestoOrigen(PresupuestoOrigenDto presupuestoOrigen) {
         this.presupuestoOrigen = presupuestoOrigen;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }

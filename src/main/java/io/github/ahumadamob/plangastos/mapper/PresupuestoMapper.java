@@ -3,8 +3,9 @@ package io.github.ahumadamob.plangastos.mapper;
 import org.springframework.stereotype.Component;
 
 import io.github.ahumadamob.plangastos.dto.PresupuestoDropdownDto;
+import io.github.ahumadamob.plangastos.dto.PresupuestoItemDto;
+import io.github.ahumadamob.plangastos.dto.PresupuestoOrigenDto;
 import io.github.ahumadamob.plangastos.dto.PresupuestoRequestDto;
-import io.github.ahumadamob.plangastos.dto.PresupuestoResponseDto;
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
 
 @Component
@@ -26,16 +27,14 @@ public class PresupuestoMapper {
         return presupuesto;
     }
 
-    public PresupuestoResponseDto entityToResponse(Presupuesto presupuesto) {
-        PresupuestoResponseDto response = new PresupuestoResponseDto();
+    public PresupuestoItemDto entityToResponse(Presupuesto presupuesto) {
+        PresupuestoItemDto response = new PresupuestoItemDto();
         response.setId(presupuesto.getId());
         response.setNombre(presupuesto.getNombre());
         response.setCodigo(presupuesto.getCodigo());
         response.setFechaDesde(presupuesto.getFechaDesde());
         response.setFechaHasta(presupuesto.getFechaHasta());
-        response.setPresupuestoOrigen(presupuesto.getPresupuestoOrigen());
-        response.setCreatedAt(presupuesto.getCreatedAt());
-        response.setUpdatedAt(presupuesto.getUpdatedAt());
+        response.setPresupuestoOrigen(toPresupuestoOrigenDto(presupuesto.getPresupuestoOrigen()));
         return response;
     }
 
@@ -44,5 +43,15 @@ public class PresupuestoMapper {
         dropdownDto.setId(presupuesto.getId());
         dropdownDto.setNombre(presupuesto.getNombre());
         return dropdownDto;
+    }
+
+    private PresupuestoOrigenDto toPresupuestoOrigenDto(Presupuesto presupuestoOrigen) {
+        if (presupuestoOrigen == null) {
+            return null;
+        }
+        PresupuestoOrigenDto dto = new PresupuestoOrigenDto();
+        dto.setId(presupuestoOrigen.getId());
+        dto.setNombre(presupuestoOrigen.getNombre());
+        return dto;
     }
 }

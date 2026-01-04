@@ -2,8 +2,8 @@ package io.github.ahumadamob.plangastos.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "PresupuestoDropdown")
-public class PresupuestoDropdownDto {
+@Schema(name = "PresupuestoOrigen")
+public class PresupuestoOrigenDto {
 
     private Long id;
     private String nombre;
