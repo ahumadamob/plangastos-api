@@ -11,8 +11,8 @@ import io.github.ahumadamob.plangastos.entity.Rubro;
 public class TransaccionResponseDto {
 
     private Long id;
-    private Presupuesto presupuesto;
-    private Rubro rubro;
+    private Long presupuesto_id;
+    private Long rubro_id;
     private String descripcion;
     private CuentaFinanciera cuenta;
     private LocalDate fecha;
@@ -24,29 +24,29 @@ public class TransaccionResponseDto {
 
     public Long getId() {
         return id;
-    }
+    } 
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public Presupuesto getPresupuesto() {
-        return presupuesto;
-    }
+    public Long getPresupuesto_id() {
+		return presupuesto_id;
+	}
 
-    public void setPresupuesto(Presupuesto presupuesto) {
-        this.presupuesto = presupuesto;
-    }
+	public void setPresupuesto_id(Long presupuesto_id) {
+		this.presupuesto_id = presupuesto_id;
+	}
 
-    public Rubro getRubro() {
-        return rubro;
-    }
+	public Long getRubro_id() {
+		return rubro_id;
+	}
 
-    public void setRubro(Rubro rubro) {
-        this.rubro = rubro;
-    }
+	public void setRubro_id(Long rubro_id) {
+		this.rubro_id = rubro_id;
+	}
 
-    public String getDescripcion() {
+	public String getDescripcion() {
         return descripcion;
     }
 

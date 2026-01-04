@@ -33,7 +33,7 @@ public class PresupuestoMapper {
         response.setCodigo(presupuesto.getCodigo());
         response.setFechaDesde(presupuesto.getFechaDesde());
         response.setFechaHasta(presupuesto.getFechaHasta());
-        response.setPresupuestoOrigen(presupuesto.getPresupuestoOrigen());
+        response.setPresupuestoOrigen_id(presupuesto.getPresupuestoOrigen() == null ? null : presupuesto.getPresupuestoOrigen().getId());
         response.setCreatedAt(presupuesto.getCreatedAt());
         response.setUpdatedAt(presupuesto.getUpdatedAt());
         return response;

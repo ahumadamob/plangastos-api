@@ -33,8 +33,8 @@ public class TransaccionMapper {
     public TransaccionResponseDto entityToResponse(Transaccion transaccion) {
         TransaccionResponseDto response = new TransaccionResponseDto();
         response.setId(transaccion.getId());
-        response.setPresupuesto(transaccion.getPresupuesto());
-        response.setRubro(transaccion.getRubro());
+        response.setPresupuesto_id(transaccion.getPresupuesto() == null ? null : transaccion.getPresupuesto().getId());
+        response.setRubro_id(transaccion.getRubro().getId());
         response.setDescripcion(transaccion.getDescripcion());
         response.setCuenta(transaccion.getCuenta());
         response.setFecha(transaccion.getFecha());
