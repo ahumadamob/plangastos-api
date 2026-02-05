@@ -2,6 +2,7 @@ package io.github.ahumadamob.plangastos.controller;
 
 import io.github.ahumadamob.plangastos.dto.CuentaFinancieraRequestDto;
 import io.github.ahumadamob.plangastos.dto.CuentaFinancieraResponseDto;
+import io.github.ahumadamob.plangastos.dto.CuentaFinancieraSaldoDto;
 import io.github.ahumadamob.plangastos.dto.common.ApiResponseSuccessDto;
 import io.github.ahumadamob.plangastos.mapper.CuentaFinancieraMapper;
 import io.github.ahumadamob.plangastos.service.CuentaFinancieraService;
@@ -39,6 +40,12 @@ public class CuentaFinancieraController {
                 .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de cuentas financieras"));
+    }
+
+    @GetMapping("/saldos")
+    public ResponseEntity<ApiResponseSuccessDto<List<CuentaFinancieraSaldoDto>>> getSaldos() {
+        List<CuentaFinancieraSaldoDto> data = service.getSaldos();
+        return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de saldos por cuenta financiera"));
     }
 
     @GetMapping("/{id}")

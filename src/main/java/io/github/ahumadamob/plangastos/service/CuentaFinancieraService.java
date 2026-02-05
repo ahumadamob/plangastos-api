@@ -1,11 +1,14 @@
 package io.github.ahumadamob.plangastos.service;
 
+import io.github.ahumadamob.plangastos.dto.CuentaFinancieraSaldoDto;
 import io.github.ahumadamob.plangastos.entity.CuentaFinanciera;
 import java.util.List;
 
 public interface CuentaFinancieraService {
 
     List<CuentaFinanciera> getAll();
+
+    List<CuentaFinancieraSaldoDto> getSaldos();
 
     CuentaFinanciera getById(Long id);
 
