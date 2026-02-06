@@ -7,6 +7,7 @@ import io.github.ahumadamob.plangastos.repository.PartidaPlanificadaRepository;
 import io.github.ahumadamob.plangastos.repository.TransaccionRepository;
 import io.github.ahumadamob.plangastos.service.PartidaPlanificadaService;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -75,6 +76,25 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
         BigDecimal montoTotal = transaccionRepository.sumMontoByPartidaPlanificadaId(id);
         partida.setMontoComprometido(montoTotal);
         partida.setConsolidado(Boolean.TRUE);
+
+        return partidaPlanificadaRepository.save(partida);
+    }
+
+    @Override
+    public PartidaPlanificada actualizarMontoComprometido(Long id, BigDecimal montoComprometido, BigDecimal porcentaje) {
+        PartidaPlanificada partida = partidaPlanificadaRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Partida planificada no encontrada con id " + id));
+
+        BigDecimal montoActual = partida.getMontoComprometido();
+
+        if (porcentaje != null) {
+            BigDecimal ajuste = montoActual.multiply(porcentaje).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+            BigDecimal nuevoMonto = montoActual.add(ajuste).setScale(2, RoundingMode.HALF_UP);
+            partida.setMontoComprometido(nuevoMonto);
+        } else {
+            partida.setMontoComprometido(montoComprometido.setScale(2, RoundingMode.HALF_UP));
+        }
 
         return partidaPlanificadaRepository.save(partida);
     }
