@@ -89,6 +89,7 @@ public class PresupuestoServiceJpa implements PresupuestoService {
         partidaNueva.setRubro(partidaOrigen.getRubro());
         partidaNueva.setDescripcion(partidaOrigen.getDescripcion());
         partidaNueva.setMontoComprometido(partidaOrigen.getMontoComprometido());
+        partidaNueva.setPartidaOrigen(partidaOrigen);
         partidaNueva.setConsolidado(Boolean.FALSE);
         partidaNueva.setCantidadCuotas(partidaOrigen.getCantidadCuotas());
         partidaNueva.setFechaObjetivo(ajustarFechaObjetivo(

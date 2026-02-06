@@ -7,6 +7,9 @@ import io.github.ahumadamob.plangastos.repository.PartidaPlanificadaRepository;
 import io.github.ahumadamob.plangastos.repository.TransaccionRepository;
 import io.github.ahumadamob.plangastos.service.PartidaPlanificadaService;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -76,6 +79,51 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
         partida.setMontoComprometido(montoTotal);
         partida.setConsolidado(Boolean.TRUE);
 
-        return partidaPlanificadaRepository.save(partida);
+        Long partidaOrigenId = partida.getPartidaOrigen() != null ? partida.getPartidaOrigen().getId() : partida.getId();
+        List<PartidaPlanificada> partidasRelacionadas =
+                partidaPlanificadaRepository.findByPartidaOrigenIdAndFechaObjetivoGreaterThanEqual(
+                        partidaOrigenId, LocalDate.now());
+
+        List<PartidaPlanificada> partidasActualizadas = new ArrayList<>();
+        partidasActualizadas.add(partida);
+
+        for (PartidaPlanificada copia : partidasRelacionadas) {
+            if (copia.getId().equals(partida.getId())) {
+                continue;
+            }
+
+            copia.setMontoComprometido(montoTotal);
+            copia.setConsolidado(!esPartidaFutura(copia));
+            copia.setCuota(calcularCuotaAjustada(partida, copia));
+            partidasActualizadas.add(copia);
+        }
+
+        partidaPlanificadaRepository.saveAll(partidasActualizadas);
+        return partida;
+    }
+
+    private boolean esPartidaFutura(PartidaPlanificada partida) {
+        return partida.getFechaObjetivo() == null || partida.getFechaObjetivo().isAfter(LocalDate.now());
+    }
+
+    private Integer calcularCuotaAjustada(PartidaPlanificada base, PartidaPlanificada copia) {
+        if (base.getCuota() == null || base.getFechaObjetivo() == null || copia.getFechaObjetivo() == null) {
+            return copia.getCuota();
+        }
+
+        long diferenciaMeses = ChronoUnit.MONTHS.between(
+                base.getFechaObjetivo().withDayOfMonth(1), copia.getFechaObjetivo().withDayOfMonth(1));
+        long cuotaAjustada = base.getCuota() + diferenciaMeses;
+
+        if (cuotaAjustada <= 0 || cuotaAjustada > Integer.MAX_VALUE) {
+            return null;
+        }
+
+        Integer cuotaCalculada = (int) cuotaAjustada;
+        if (copia.getCantidadCuotas() != null && cuotaCalculada > copia.getCantidadCuotas()) {
+            return null;
+        }
+
+        return cuotaCalculada;
     }
 }
