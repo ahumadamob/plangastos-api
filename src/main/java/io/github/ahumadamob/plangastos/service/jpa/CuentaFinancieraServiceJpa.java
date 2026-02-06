@@ -1,5 +1,6 @@
 package io.github.ahumadamob.plangastos.service.jpa;
 
+import io.github.ahumadamob.plangastos.dto.CuentaFinancieraSaldoDto;
 import io.github.ahumadamob.plangastos.entity.CuentaFinanciera;
 import io.github.ahumadamob.plangastos.repository.CuentaFinancieraRepository;
 import io.github.ahumadamob.plangastos.service.CuentaFinancieraService;
@@ -18,6 +19,11 @@ public class CuentaFinancieraServiceJpa implements CuentaFinancieraService {
     @Override
     public List<CuentaFinanciera> getAll() {
         return cuentaFinancieraRepository.findAll();
+    }
+
+    @Override
+    public List<CuentaFinancieraSaldoDto> getSaldos() {
+        return cuentaFinancieraRepository.findAllSaldos();
     }
 
     @Override
