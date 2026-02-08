@@ -70,6 +70,23 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
     }
 
     @Override
+    public PartidaPlanificada actualizarMontoComprometido(Long id, BigDecimal montoComprometido, BigDecimal porcentaje) {
+        PartidaPlanificada partida = partidaPlanificadaRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Partida planificada no encontrada con id " + id));
+
+        validarActualizacionMonto(montoComprometido, porcentaje);
+
+        BigDecimal montoOriginal = partida.getMontoComprometido();
+        BigDecimal montoActualizado = montoComprometido != null
+                ? montoComprometido
+                : montoOriginal.add(montoOriginal.multiply(porcentaje).divide(BigDecimal.valueOf(100)));
+
+        partida.setMontoComprometido(montoActualizado);
+        return partidaPlanificadaRepository.save(partida);
+    }
+
+    @Override
     public PartidaPlanificada consolidar(Long id) {
         PartidaPlanificada partida = partidaPlanificadaRepository
                 .findById(id)
@@ -100,6 +117,20 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
 
         partidaPlanificadaRepository.saveAll(partidasActualizadas);
         return partida;
+    }
+
+    private void validarActualizacionMonto(BigDecimal montoComprometido, BigDecimal porcentaje) {
+        if (montoComprometido == null && porcentaje == null) {
+            throw new IllegalArgumentException("Debe enviar montoComprometido o porcentaje");
+        }
+
+        if (montoComprometido != null && porcentaje != null) {
+            throw new IllegalArgumentException("Solo debe enviar montoComprometido o porcentaje, no ambos");
+        }
+
+        if (porcentaje != null && porcentaje.compareTo(BigDecimal.valueOf(-100)) < 0) {
+            throw new IllegalArgumentException("porcentaje no puede ser menor a -100");
+        }
     }
 
     private boolean esPartidaFutura(PartidaPlanificada partida) {

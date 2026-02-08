@@ -125,6 +125,13 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.METHOD_NOT_ALLOWED, errors, request);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseDto> handleIllegalArgument(IllegalArgumentException ex,
+            HttpServletRequest request) {
+        List<ErrorDetailDto> errors = List.of(new ErrorDetailDto("request", ex.getMessage()));
+        return buildResponse(HttpStatus.BAD_REQUEST, errors, request);
+    }
+
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<ErrorResponseDto> handleSqlIntegrity(SQLIntegrityConstraintViolationException ex,
             HttpServletRequest request) {

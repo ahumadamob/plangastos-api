@@ -1,6 +1,7 @@
 package io.github.ahumadamob.plangastos.service.jpa;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -86,4 +87,93 @@ class PartidaPlanificadaServiceJpaTest {
         assertThat(actualizadaSinCuotaValida.getConsolidado()).isFalse();
         assertThat(actualizadaSinCuotaValida.getCuota()).isNull();
     }
+
+
+    @Test
+    void actualizarMontoComprometido_DebePersistirMontoCuandoSeEnviaValor() {
+        PartidaPlanificada partida = new PartidaPlanificada();
+        partida.setId(20L);
+        partida.setMontoComprometido(BigDecimal.valueOf(1000));
+
+        when(partidaPlanificadaRepository.findById(20L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.save(partida)).thenReturn(partida);
+
+        PartidaPlanificada actualizada =
+                partidaPlanificadaServiceJpa.actualizarMontoComprometido(20L, BigDecimal.valueOf(750), null);
+
+        assertThat(actualizada.getMontoComprometido()).isEqualByComparingTo("750");
+        verify(partidaPlanificadaRepository).save(partida);
+    }
+
+    @Test
+    void actualizarMontoComprometido_DebeIncrementarMontoConPorcentajeSobreOriginal() {
+        PartidaPlanificada partida = new PartidaPlanificada();
+        partida.setId(21L);
+        partida.setMontoComprometido(BigDecimal.valueOf(1000));
+
+        when(partidaPlanificadaRepository.findById(21L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.save(partida)).thenReturn(partida);
+
+        PartidaPlanificada actualizada =
+                partidaPlanificadaServiceJpa.actualizarMontoComprometido(21L, null, BigDecimal.valueOf(10));
+
+        assertThat(actualizada.getMontoComprometido()).isEqualByComparingTo("1100");
+    }
+
+    @Test
+    void actualizarMontoComprometido_DebePermitirPorcentajeNegativoHastaMenosCien() {
+        PartidaPlanificada partida = new PartidaPlanificada();
+        partida.setId(22L);
+        partida.setMontoComprometido(BigDecimal.valueOf(1000));
+
+        when(partidaPlanificadaRepository.findById(22L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.save(partida)).thenReturn(partida);
+
+        PartidaPlanificada actualizada =
+                partidaPlanificadaServiceJpa.actualizarMontoComprometido(22L, null, BigDecimal.valueOf(-100));
+
+        assertThat(actualizada.getMontoComprometido()).isEqualByComparingTo("0");
+    }
+
+    @Test
+    void actualizarMontoComprometido_DebeFallarCuandoNoSeEnviaMontoNiPorcentaje() {
+        PartidaPlanificada partida = new PartidaPlanificada();
+        partida.setId(23L);
+        partida.setMontoComprometido(BigDecimal.valueOf(1000));
+
+        when(partidaPlanificadaRepository.findById(23L)).thenReturn(Optional.of(partida));
+
+        assertThatThrownBy(() -> partidaPlanificadaServiceJpa.actualizarMontoComprometido(23L, null, null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Debe enviar montoComprometido o porcentaje");
+    }
+
+    @Test
+    void actualizarMontoComprometido_DebeFallarCuandoPorcentajeEsMenorAMenosCien() {
+        PartidaPlanificada partida = new PartidaPlanificada();
+        partida.setId(24L);
+        partida.setMontoComprometido(BigDecimal.valueOf(1000));
+
+        when(partidaPlanificadaRepository.findById(24L)).thenReturn(Optional.of(partida));
+
+        assertThatThrownBy(() ->
+                        partidaPlanificadaServiceJpa.actualizarMontoComprometido(24L, null, BigDecimal.valueOf(-100.01)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("porcentaje no puede ser menor a -100");
+    }
+
+    @Test
+    void actualizarMontoComprometido_DebeFallarCuandoSeEnviaMontoYPorcentaje() {
+        PartidaPlanificada partida = new PartidaPlanificada();
+        partida.setId(25L);
+        partida.setMontoComprometido(BigDecimal.valueOf(1000));
+
+        when(partidaPlanificadaRepository.findById(25L)).thenReturn(Optional.of(partida));
+
+        assertThatThrownBy(() -> partidaPlanificadaServiceJpa.actualizarMontoComprometido(
+                        25L, BigDecimal.valueOf(800), BigDecimal.valueOf(10)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Solo debe enviar montoComprometido o porcentaje, no ambos");
+    }
+
 }

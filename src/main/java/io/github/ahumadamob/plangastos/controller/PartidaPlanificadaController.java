@@ -1,5 +1,6 @@
 package io.github.ahumadamob.plangastos.controller;
 
+import io.github.ahumadamob.plangastos.dto.PartidaPlanificadaMontoComprometidoRequestDto;
 import io.github.ahumadamob.plangastos.dto.PartidaPlanificadaRequestDto;
 import io.github.ahumadamob.plangastos.dto.PartidaPlanificadaResponseDto;
 import io.github.ahumadamob.plangastos.dto.common.ApiResponseSuccessDto;
@@ -9,6 +10,7 @@ import io.github.ahumadamob.plangastos.util.ApiResponseFactory;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -90,6 +92,14 @@ public class PartidaPlanificadaController {
         PartidaPlanificadaResponseDto data = mapper.entityToResponse(
                 service.update(id, mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Partida planificada actualizada"));
+    }
+
+    @PatchMapping("/{id}/monto-comprometido")
+    public ResponseEntity<ApiResponseSuccessDto<PartidaPlanificadaResponseDto>> actualizarMontoComprometido(
+            @PathVariable Long id, @Valid @RequestBody PartidaPlanificadaMontoComprometidoRequestDto request) {
+        PartidaPlanificadaResponseDto data = mapper.entityToResponse(
+                service.actualizarMontoComprometido(id, request.getMontoComprometido(), request.getPorcentaje()));
+        return ResponseEntity.ok(ApiResponseFactory.success(data, "Monto comprometido actualizado"));
     }
 
     @PatchMapping("/{id}")
