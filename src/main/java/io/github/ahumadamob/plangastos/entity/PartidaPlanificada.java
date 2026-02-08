@@ -8,6 +8,8 @@ import java.util.List;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.AssertTrue;
@@ -33,6 +35,10 @@ public class PartidaPlanificada extends RegistroPresupuesto {
 
     @Positive
     private Integer cantidadCuotas;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "partida_origen_id")
+    private PartidaPlanificada partidaOrigen;
 
     @OneToMany(mappedBy = "partidaPlanificada", fetch = FetchType.LAZY)
     private List<Transaccion> transacciones = new ArrayList<>();
@@ -83,6 +89,14 @@ public class PartidaPlanificada extends RegistroPresupuesto {
 
     public void setCantidadCuotas(Integer cantidadCuotas) {
         this.cantidadCuotas = cantidadCuotas;
+    }
+
+    public PartidaPlanificada getPartidaOrigen() {
+        return partidaOrigen;
+    }
+
+    public void setPartidaOrigen(PartidaPlanificada partidaOrigen) {
+        this.partidaOrigen = partidaOrigen;
     }
 
     public List<Transaccion> getTransacciones() {

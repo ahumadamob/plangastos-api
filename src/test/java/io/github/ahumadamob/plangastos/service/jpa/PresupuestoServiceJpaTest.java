@@ -88,6 +88,8 @@ class PresupuestoServiceJpaTest {
         assertThat(copiaB.getPresupuesto().getId()).isEqualTo(2L);
         assertThat(copiaA.getDescripcion()).isEqualTo("Partida A");
         assertThat(copiaB.getDescripcion()).isEqualTo("Partida B");
+        assertThat(copiaA.getPartidaOrigen()).isSameAs(partidaA);
+        assertThat(copiaB.getPartidaOrigen()).isSameAs(partidaB);
         assertThat(copiaA.getFechaObjetivo()).isEqualTo(LocalDate.of(2025, 10, 10));
         assertThat(copiaB.getFechaObjetivo()).isEqualTo(LocalDate.of(2025, 9, 25));
         assertThat(copiaA.getTransacciones()).isEmpty();
