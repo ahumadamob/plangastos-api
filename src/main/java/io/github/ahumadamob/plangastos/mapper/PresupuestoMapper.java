@@ -22,6 +22,7 @@ public class PresupuestoMapper {
         presupuesto.setCodigo(request.getCodigo());
         presupuesto.setFechaDesde(request.getFechaDesde());
         presupuesto.setFechaHasta(request.getFechaHasta());
+        presupuesto.setInactivo(request.getInactivo());
         presupuesto.setPresupuestoOrigen(mapperHelper.getPresupuesto(request.getPresupuestoOrigen_id()));
         return presupuesto;
     }
@@ -33,6 +34,7 @@ public class PresupuestoMapper {
         response.setCodigo(presupuesto.getCodigo());
         response.setFechaDesde(presupuesto.getFechaDesde());
         response.setFechaHasta(presupuesto.getFechaHasta());
+        response.setInactivo(presupuesto.getInactivo());
         response.setPresupuestoOrigen_id(presupuesto.getPresupuestoOrigen() == null ? null : presupuesto.getPresupuestoOrigen().getId());
         response.setCreatedAt(presupuesto.getCreatedAt());
         response.setUpdatedAt(presupuesto.getUpdatedAt());

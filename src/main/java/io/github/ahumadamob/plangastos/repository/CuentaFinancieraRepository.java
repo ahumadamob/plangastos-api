@@ -32,6 +32,8 @@ public interface CuentaFinancieraRepository extends JpaRepository<CuentaFinancie
             left join Transaccion t on t.cuenta.id = c.id
             left join t.partidaPlanificada pp
             left join pp.rubro r
+            left join pp.presupuesto p
+            where p.id is null or p.inactivo is null or p.inactivo = false
             group by c.id, c.nombre, d.codigo, c.saldoInicial
             order by c.id
             """)

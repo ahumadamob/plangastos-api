@@ -11,4 +11,8 @@ import io.github.ahumadamob.plangastos.entity.Presupuesto;
 public interface PresupuestoRepository extends JpaRepository<Presupuesto, Long> {
 
     List<Presupuesto> findAllByOrderByFechaDesdeDesc();
+
+    List<Presupuesto> findByInactivoIsNullOrInactivoFalse();
+
+    List<Presupuesto> findByInactivoIsNullOrInactivoFalseOrderByFechaDesdeDesc();
 }

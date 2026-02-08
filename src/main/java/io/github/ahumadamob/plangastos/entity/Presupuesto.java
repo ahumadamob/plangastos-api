@@ -25,6 +25,8 @@ public class Presupuesto extends BaseEntity {
 
     private LocalDate fechaHasta;
 
+    private Boolean inactivo;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "presupuesto_origen_id")
     private Presupuesto presupuestoOrigen;
@@ -59,6 +61,14 @@ public class Presupuesto extends BaseEntity {
 
     public void setFechaHasta(LocalDate fechaHasta) {
         this.fechaHasta = fechaHasta;
+    }
+
+    public Boolean getInactivo() {
+        return inactivo;
+    }
+
+    public void setInactivo(Boolean inactivo) {
+        this.inactivo = inactivo;
     }
 
     public Presupuesto getPresupuestoOrigen() {
