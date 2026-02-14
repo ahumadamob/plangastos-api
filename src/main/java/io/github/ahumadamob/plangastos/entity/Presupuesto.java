@@ -18,9 +18,6 @@ public class Presupuesto extends BaseEntity {
     @Column(nullable = false)
     private String nombre;
 
-    @Column(unique = true)
-    private String codigo;
-
     private LocalDate fechaDesde;
 
     private LocalDate fechaHasta;
@@ -37,14 +34,6 @@ public class Presupuesto extends BaseEntity {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
     }
 
     public LocalDate getFechaDesde() {
