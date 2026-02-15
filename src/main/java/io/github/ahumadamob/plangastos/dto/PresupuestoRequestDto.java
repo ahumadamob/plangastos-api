@@ -5,7 +5,6 @@ import java.time.LocalDate;
 public class PresupuestoRequestDto {
 
     private String nombre;
-    private String codigo;
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
     private Boolean inactivo;
@@ -19,13 +18,6 @@ public class PresupuestoRequestDto {
         this.nombre = nombre;
     }
 
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
 
     public LocalDate getFechaDesde() {
         return fechaDesde;
