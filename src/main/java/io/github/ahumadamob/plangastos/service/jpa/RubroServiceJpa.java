@@ -1,7 +1,10 @@
 package io.github.ahumadamob.plangastos.service.jpa;
 
 import io.github.ahumadamob.plangastos.entity.Rubro;
+import io.github.ahumadamob.plangastos.exception.ResourceNotFoundException;
 import io.github.ahumadamob.plangastos.repository.RubroRepository;
+import io.github.ahumadamob.plangastos.repository.UsuarioRepository;
+import io.github.ahumadamob.plangastos.security.CurrentUserService;
 import io.github.ahumadamob.plangastos.service.RubroService;
 import java.util.HashSet;
 import java.util.List;
@@ -12,40 +15,55 @@ import org.springframework.stereotype.Service;
 public class RubroServiceJpa implements RubroService {
 
     private final RubroRepository rubroRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final CurrentUserService currentUserService;
 
-    public RubroServiceJpa(RubroRepository rubroRepository) {
+    public RubroServiceJpa(
+            RubroRepository rubroRepository, UsuarioRepository usuarioRepository, CurrentUserService currentUserService) {
         this.rubroRepository = rubroRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.currentUserService = currentUserService;
     }
 
     @Override
     public List<Rubro> getAll() {
-        return rubroRepository.findAll();
+        Long usuarioId = currentUserService.getCurrentUserId();
+        return rubroRepository.findByUsuarioId(usuarioId);
     }
 
     @Override
     public Rubro getById(Long id) {
-        return rubroRepository.findById(id).orElse(null);
+        Long usuarioId = currentUserService.getCurrentUserId();
+        return rubroRepository.findByIdAndUsuarioId(id, usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Rubro no encontrado con id " + id));
     }
 
     @Override
     public Rubro create(Rubro rubro) {
-        validarJerarquiaSinCiclos(rubro);
+        Long usuarioId = currentUserService.getCurrentUserId();
+        rubro.setUsuario(usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id " + usuarioId)));
+        validarJerarquiaSinCiclos(rubro, usuarioId);
         return rubroRepository.save(rubro);
     }
 
     @Override
     public Rubro update(Long id, Rubro rubro) {
+        Long usuarioId = currentUserService.getCurrentUserId();
+        Rubro existente = getById(id);
         rubro.setId(id);
-        validarJerarquiaSinCiclos(rubro);
+        rubro.setUsuario(existente.getUsuario());
+        validarJerarquiaSinCiclos(rubro, usuarioId);
         return rubroRepository.save(rubro);
     }
 
     @Override
     public void delete(Long id) {
-        rubroRepository.deleteById(id);
+        Rubro existente = getById(id);
+        rubroRepository.deleteById(existente.getId());
     }
 
-    private void validarJerarquiaSinCiclos(Rubro rubro) {
+    private void validarJerarquiaSinCiclos(Rubro rubro, Long usuarioId) {
         Set<Long> visitados = new HashSet<>();
         if (rubro.getId() != null) {
             visitados.add(rubro.getId());
@@ -57,7 +75,7 @@ public class RubroServiceJpa implements RubroService {
             if (actualId != null && !visitados.add(actualId)) {
                 throw new IllegalArgumentException("Se detectó un ciclo en parent de Rubro");
             }
-            actual = actualId != null ? rubroRepository.findById(actualId).orElse(actual.getParent()) : actual.getParent();
+            actual = actualId != null ? rubroRepository.findByIdAndUsuarioId(actualId, usuarioId).orElse(actual.getParent()) : actual.getParent();
         }
 
         rubro.validarJerarquiaSinCiclos();

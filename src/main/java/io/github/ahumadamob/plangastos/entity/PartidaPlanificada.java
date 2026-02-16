@@ -22,6 +22,12 @@ import jakarta.validation.constraints.Positive;
 @Table(name = "partidas_planificadas")
 public class PartidaPlanificada extends RegistroPresupuesto {
 
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
     @NotNull
     @Column(nullable = false, precision = 18, scale = 2)
     private BigDecimal montoComprometido;
@@ -52,6 +58,15 @@ public class PartidaPlanificada extends RegistroPresupuesto {
             return true;
         }
         return cuota <= cantidadCuotas;
+    }
+
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public BigDecimal getMontoComprometido() {

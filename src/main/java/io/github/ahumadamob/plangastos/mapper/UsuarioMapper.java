@@ -10,6 +10,7 @@ public class UsuarioMapper {
         Usuario usuario = new Usuario();
         usuario.setNombre(request.getNombre());
         usuario.setEmail(request.getEmail());
+        usuario.setPasswordHash(request.getPassword());
         return usuario;
     }
 

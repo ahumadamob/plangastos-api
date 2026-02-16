@@ -18,7 +18,6 @@ public class CuentaFinancieraMapper {
     public CuentaFinanciera requestToEntity(CuentaFinancieraRequestDto request) {
         CuentaFinanciera cuentaFinanciera = new CuentaFinanciera();
 
-        cuentaFinanciera.setUsuario(mapperHelper.getUsuario(request.getUsuario_id()));
         cuentaFinanciera.setDivisa(mapperHelper.getDivisa(request.getDivisa_id()));
         cuentaFinanciera.setNombre(request.getNombre());
         cuentaFinanciera.setTipo(request.getTipo());

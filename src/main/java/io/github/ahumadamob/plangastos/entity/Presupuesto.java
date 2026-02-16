@@ -17,6 +17,11 @@ import jakarta.validation.constraints.NotBlank;
 @Table(name = "presupuestos")
 public class Presupuesto extends BaseEntity {
 
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
     @NotBlank
     @Column(nullable = false)
     private String nombre;
@@ -31,6 +36,15 @@ public class Presupuesto extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "presupuesto_origen_id")
     private Presupuesto presupuestoOrigen;
+
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 
     public String getNombre() {
         return nombre;
