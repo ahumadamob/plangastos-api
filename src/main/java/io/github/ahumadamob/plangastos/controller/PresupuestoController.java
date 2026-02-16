@@ -8,6 +8,7 @@ import io.github.ahumadamob.plangastos.mapper.PresupuestoMapper;
 import io.github.ahumadamob.plangastos.service.PresupuestoService;
 import io.github.ahumadamob.plangastos.util.ApiResponseFactory;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -58,7 +59,7 @@ public class PresupuestoController {
 
     @PostMapping
     public ResponseEntity<ApiResponseSuccessDto<PresupuestoResponseDto>> create(
-            @RequestBody PresupuestoRequestDto request) {
+            @Valid @RequestBody PresupuestoRequestDto request) {
         PresupuestoResponseDto data = mapper.entityToResponse(
                 service.create(mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Presupuesto creado"));
@@ -66,7 +67,7 @@ public class PresupuestoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<PresupuestoResponseDto>> update(
-            @PathVariable Long id, @RequestBody PresupuestoRequestDto request) {
+            @PathVariable Long id, @Valid @RequestBody PresupuestoRequestDto request) {
         PresupuestoResponseDto data = mapper.entityToResponse(
                 service.update(id, mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Presupuesto actualizado"));

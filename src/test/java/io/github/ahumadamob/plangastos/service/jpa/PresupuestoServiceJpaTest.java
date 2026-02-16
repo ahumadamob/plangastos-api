@@ -1,14 +1,15 @@
 package io.github.ahumadamob.plangastos.service.jpa;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
+import io.github.ahumadamob.plangastos.exception.BusinessValidationException;
 import io.github.ahumadamob.plangastos.repository.PartidaPlanificadaRepository;
 import io.github.ahumadamob.plangastos.repository.PresupuestoRepository;
 import java.math.BigDecimal;
@@ -32,6 +33,58 @@ class PresupuestoServiceJpaTest {
 
     @InjectMocks
     private PresupuestoServiceJpa presupuestoServiceJpa;
+
+    @Test
+    void create_CuandoNoHayFechas_DebePermitirPersistir() {
+        Presupuesto presupuesto = new Presupuesto();
+
+        when(presupuestoRepository.save(presupuesto)).thenReturn(presupuesto);
+
+        Presupuesto resultado = presupuestoServiceJpa.create(presupuesto);
+
+        assertThat(resultado).isSameAs(presupuesto);
+        verify(presupuestoRepository).save(presupuesto);
+    }
+
+    @Test
+    void create_CuandoSoloHayUnaFecha_DebePermitirPersistir() {
+        Presupuesto presupuesto = new Presupuesto();
+        presupuesto.setFechaDesde(LocalDate.of(2025, 1, 1));
+
+        when(presupuestoRepository.save(presupuesto)).thenReturn(presupuesto);
+
+        Presupuesto resultado = presupuestoServiceJpa.create(presupuesto);
+
+        assertThat(resultado).isSameAs(presupuesto);
+        verify(presupuestoRepository).save(presupuesto);
+    }
+
+    @Test
+    void create_CuandoElRangoEsValido_DebePermitirPersistir() {
+        Presupuesto presupuesto = new Presupuesto();
+        presupuesto.setFechaDesde(LocalDate.of(2025, 1, 1));
+        presupuesto.setFechaHasta(LocalDate.of(2025, 1, 31));
+
+        when(presupuestoRepository.save(presupuesto)).thenReturn(presupuesto);
+
+        Presupuesto resultado = presupuestoServiceJpa.create(presupuesto);
+
+        assertThat(resultado).isSameAs(presupuesto);
+        verify(presupuestoRepository).save(presupuesto);
+    }
+
+    @Test
+    void create_CuandoElRangoEsInvalido_DebeLanzarBusinessValidationException() {
+        Presupuesto presupuesto = new Presupuesto();
+        presupuesto.setFechaDesde(LocalDate.of(2025, 2, 1));
+        presupuesto.setFechaHasta(LocalDate.of(2025, 1, 31));
+
+        assertThatThrownBy(() -> presupuestoServiceJpa.create(presupuesto))
+                .isInstanceOf(BusinessValidationException.class)
+                .hasMessage("fechaDesde debe ser anterior o igual a fechaHasta");
+
+        verify(presupuestoRepository, never()).save(any());
+    }
 
     @Test
     void create_WhenNoPresupuestoOrigen_ShouldNotCopiarPartidas() {
