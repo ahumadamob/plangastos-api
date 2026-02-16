@@ -10,7 +10,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,12 +39,14 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
 
     @Override
     public PartidaPlanificada create(PartidaPlanificada partidaPlanificada) {
+        validarJerarquiaSinCiclos(partidaPlanificada);
         return partidaPlanificadaRepository.save(partidaPlanificada);
     }
 
     @Override
     public PartidaPlanificada update(Long id, PartidaPlanificada partidaPlanificada) {
         partidaPlanificada.setId(id);
+        validarJerarquiaSinCiclos(partidaPlanificada);
         return partidaPlanificadaRepository.save(partidaPlanificada);
     }
 
@@ -117,6 +121,26 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
 
         partidaPlanificadaRepository.saveAll(partidasActualizadas);
         return partida;
+    }
+
+    private void validarJerarquiaSinCiclos(PartidaPlanificada partidaPlanificada) {
+        Set<Long> visitados = new HashSet<>();
+        if (partidaPlanificada.getId() != null) {
+            visitados.add(partidaPlanificada.getId());
+        }
+
+        PartidaPlanificada actual = partidaPlanificada.getPartidaOrigen();
+        while (actual != null) {
+            Long actualId = actual.getId();
+            if (actualId != null && !visitados.add(actualId)) {
+                throw new IllegalArgumentException("Se detectó un ciclo en partidaOrigen");
+            }
+            actual = actualId != null
+                    ? partidaPlanificadaRepository.findById(actualId).orElse(actual.getPartidaOrigen())
+                    : actual.getPartidaOrigen();
+        }
+
+        partidaPlanificada.validarJerarquiaSinCiclos();
     }
 
     private void validarActualizacionMonto(BigDecimal montoComprometido, BigDecimal porcentaje) {

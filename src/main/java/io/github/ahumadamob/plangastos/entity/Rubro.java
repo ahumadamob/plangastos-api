@@ -1,5 +1,8 @@
 package io.github.ahumadamob.plangastos.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -74,5 +77,21 @@ public class Rubro extends BaseEntity {
 
     public void setActivo(Boolean activo) {
         this.activo = activo;
+    }
+
+    public void validarJerarquiaSinCiclos() {
+        Set<Long> visitados = new HashSet<>();
+        if (getId() != null) {
+            visitados.add(getId());
+        }
+
+        Rubro actual = parent;
+        while (actual != null) {
+            Long actualId = actual.getId();
+            if (actualId != null && !visitados.add(actualId)) {
+                throw new IllegalArgumentException("La jerarquía de rubro contiene una autoreferencia o ciclo");
+            }
+            actual = actual.getParent();
+        }
     }
 }
