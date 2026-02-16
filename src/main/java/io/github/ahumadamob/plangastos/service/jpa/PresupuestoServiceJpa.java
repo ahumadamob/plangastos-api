@@ -30,12 +30,12 @@ public class PresupuestoServiceJpa implements PresupuestoService {
 
     @Override
     public List<Presupuesto> getAll() {
-        return presupuestoRepository.findByInactivoIsNullOrInactivoFalse();
+        return presupuestoRepository.findByInactivoFalse();
     }
 
     @Override
     public List<Presupuesto> getAllOrderByFechaDesdeDesc() {
-        return presupuestoRepository.findByInactivoIsNullOrInactivoFalseOrderByFechaDesdeDesc();
+        return presupuestoRepository.findByInactivoFalseOrderByFechaDesdeDesc();
     }
 
     @Override
@@ -124,7 +124,7 @@ public class PresupuestoServiceJpa implements PresupuestoService {
         partidaNueva.setDescripcion(partidaOrigen.getDescripcion());
         partidaNueva.setMontoComprometido(partidaOrigen.getMontoComprometido());
         partidaNueva.setPartidaOrigen(partidaOrigen);
-        partidaNueva.setConsolidado(Boolean.FALSE);
+        partidaNueva.setConsolidado(false);
         partidaNueva.setCantidadCuotas(partidaOrigen.getCantidadCuotas());
         partidaNueva.setFechaObjetivo(ajustarFechaObjetivo(
                 partidaOrigen.getFechaObjetivo(), mesesDiferencia));

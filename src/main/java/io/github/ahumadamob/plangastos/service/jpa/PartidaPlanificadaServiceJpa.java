@@ -98,7 +98,7 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
 
         BigDecimal montoTotal = transaccionRepository.sumMontoByPartidaPlanificadaId(id);
         partida.setMontoComprometido(montoTotal);
-        partida.setConsolidado(Boolean.TRUE);
+        partida.setConsolidado(true);
 
         Long partidaOrigenId = partida.getPartidaOrigen() != null ? partida.getPartidaOrigen().getId() : partida.getId();
         List<PartidaPlanificada> partidasRelacionadas =
