@@ -12,7 +12,7 @@ public interface PresupuestoRepository extends JpaRepository<Presupuesto, Long> 
 
     List<Presupuesto> findAllByOrderByFechaDesdeDesc();
 
-    List<Presupuesto> findByInactivoIsNullOrInactivoFalse();
+    List<Presupuesto> findByInactivoFalse();
 
-    List<Presupuesto> findByInactivoIsNullOrInactivoFalseOrderByFechaDesdeDesc();
+    List<Presupuesto> findByInactivoFalseOrderByFechaDesdeDesc();
 }

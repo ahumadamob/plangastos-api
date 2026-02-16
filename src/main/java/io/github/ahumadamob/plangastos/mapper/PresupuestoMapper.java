@@ -21,7 +21,7 @@ public class PresupuestoMapper {
         presupuesto.setNombre(request.getNombre());
         presupuesto.setFechaDesde(request.getFechaDesde());
         presupuesto.setFechaHasta(request.getFechaHasta());
-        presupuesto.setInactivo(request.getInactivo());
+        presupuesto.setInactivo(Boolean.TRUE.equals(request.getInactivo()));
         presupuesto.setPresupuestoOrigen(mapperHelper.getPresupuesto(request.getPresupuestoOrigen_id()));
         return presupuesto;
     }

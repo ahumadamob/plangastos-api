@@ -19,7 +19,7 @@ public class RubroMapper {
         Rubro rubro = new Rubro();
         rubro.setNaturaleza(mapperHelper.getNaturalezaMovimiento(request.getNaturalezaMovimiento_id()));
         rubro.setNombre(request.getNombre());
-        rubro.setActivo(request.getActivo());
+        rubro.setActivo(Boolean.TRUE.equals(request.getActivo()));
         return rubro;
     }
 

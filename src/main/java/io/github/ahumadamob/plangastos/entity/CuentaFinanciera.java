@@ -41,7 +41,7 @@ public class CuentaFinanciera extends BaseEntity {
 
     @NotNull
     @Column(nullable = false)
-    private Boolean activo;
+    private boolean activo = false;
 
     public Usuario getUsuario() {
         return usuario;
@@ -83,11 +83,11 @@ public class CuentaFinanciera extends BaseEntity {
         this.saldoInicial = saldoInicial;
     }
 
-    public Boolean getActivo() {
+    public boolean getActivo() {
         return activo;
     }
 
-    public void setActivo(Boolean activo) {
+    public void setActivo(boolean activo) {
         this.activo = activo;
     }
 }

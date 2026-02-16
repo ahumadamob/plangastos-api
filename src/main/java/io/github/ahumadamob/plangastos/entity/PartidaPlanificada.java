@@ -28,7 +28,8 @@ public class PartidaPlanificada extends RegistroPresupuesto {
 
     private LocalDate fechaObjetivo;
 
-    private Boolean consolidado = Boolean.FALSE;
+    @Column(nullable = false)
+    private boolean consolidado = false;
 
     @Positive
     // Se mapea a la columna "cuota" para mantener la nomenclatura en BD.
@@ -69,11 +70,11 @@ public class PartidaPlanificada extends RegistroPresupuesto {
         this.fechaObjetivo = fechaObjetivo;
     }
 
-    public Boolean getConsolidado() {
+    public boolean getConsolidado() {
         return consolidado;
     }
 
-    public void setConsolidado(Boolean consolidado) {
+    public void setConsolidado(boolean consolidado) {
         this.consolidado = consolidado;
     }
 

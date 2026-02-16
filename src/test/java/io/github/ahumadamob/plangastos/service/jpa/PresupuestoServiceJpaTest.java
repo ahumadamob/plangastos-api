@@ -86,6 +86,18 @@ class PresupuestoServiceJpaTest {
         verify(presupuestoRepository, never()).save(any());
     }
 
+
+    @Test
+    void create_DebePersistirInactivoEnFalsePorDefecto() {
+        Presupuesto presupuesto = new Presupuesto();
+
+        when(presupuestoRepository.save(presupuesto)).thenReturn(presupuesto);
+
+        Presupuesto resultado = presupuestoServiceJpa.create(presupuesto);
+
+        assertThat(resultado.getInactivo()).isFalse();
+    }
+
     @Test
     void create_WhenNoPresupuestoOrigen_ShouldNotCopiarPartidas() {
         Presupuesto presupuesto = new Presupuesto();

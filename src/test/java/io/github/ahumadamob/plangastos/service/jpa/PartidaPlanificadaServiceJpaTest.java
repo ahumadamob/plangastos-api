@@ -264,4 +264,15 @@ class PartidaPlanificadaServiceJpaTest {
         assertThat(resultado).isSameAs(partida);
     }
 
+    @Test
+    void create_DebePersistirConsolidadoEnFalsePorDefecto() {
+        PartidaPlanificada partida = new PartidaPlanificada();
+
+        when(partidaPlanificadaRepository.save(partida)).thenReturn(partida);
+
+        PartidaPlanificada resultado = partidaPlanificadaServiceJpa.create(partida);
+
+        assertThat(resultado.getConsolidado()).isFalse();
+    }
+
 }
