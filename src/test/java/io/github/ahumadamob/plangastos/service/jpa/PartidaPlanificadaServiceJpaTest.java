@@ -6,8 +6,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
+import io.github.ahumadamob.plangastos.entity.Usuario;
 import io.github.ahumadamob.plangastos.repository.PartidaPlanificadaRepository;
 import io.github.ahumadamob.plangastos.repository.TransaccionRepository;
+import io.github.ahumadamob.plangastos.repository.UsuarioRepository;
+import io.github.ahumadamob.plangastos.security.CurrentUserService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -28,12 +31,20 @@ class PartidaPlanificadaServiceJpaTest {
     @Mock
     private TransaccionRepository transaccionRepository;
 
+    @Mock
+    private UsuarioRepository usuarioRepository;
+
+    @Mock
+    private CurrentUserService currentUserService;
+
     @InjectMocks
     private PartidaPlanificadaServiceJpa partidaPlanificadaServiceJpa;
 
     @Test
     void consolidar_DebePropagarAjustesACopiasRelacionadas() {
         LocalDate hoy = LocalDate.now();
+
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
 
         PartidaPlanificada original = new PartidaPlanificada();
         original.setId(10L);
@@ -55,9 +66,9 @@ class PartidaPlanificadaServiceJpaTest {
         copiaSinCuotaValida.setCuota(4);
         copiaSinCuotaValida.setCantidadCuotas(5);
 
-        when(partidaPlanificadaRepository.findById(10L)).thenReturn(Optional.of(original));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(10L, 1L)).thenReturn(Optional.of(original));
         when(transaccionRepository.sumMontoByPartidaPlanificadaId(10L)).thenReturn(BigDecimal.valueOf(2500));
-        when(partidaPlanificadaRepository.findByPartidaOrigenIdAndFechaObjetivoGreaterThanEqual(10L, hoy))
+        when(partidaPlanificadaRepository.findByPartidaOrigenIdAndUsuarioIdAndFechaObjetivoGreaterThanEqual(10L, 1L, hoy))
                 .thenReturn(List.of(copiaFutura, copiaSinCuotaValida));
 
         PartidaPlanificada consolidada = partidaPlanificadaServiceJpa.consolidar(10L);
@@ -91,11 +102,16 @@ class PartidaPlanificadaServiceJpaTest {
 
     @Test
     void actualizarMontoComprometido_DebePersistirMontoCuandoSeEnviaValor() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+
         PartidaPlanificada partida = new PartidaPlanificada();
         partida.setId(20L);
         partida.setMontoComprometido(BigDecimal.valueOf(1000));
 
-        when(partidaPlanificadaRepository.findById(20L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(20L, 1L)).thenReturn(Optional.of(partida));
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         when(partidaPlanificadaRepository.save(partida)).thenReturn(partida);
 
         PartidaPlanificada actualizada =
@@ -108,10 +124,15 @@ class PartidaPlanificadaServiceJpaTest {
     @Test
     void actualizarMontoComprometido_DebeIncrementarMontoConPorcentajeSobreOriginal() {
         PartidaPlanificada partida = new PartidaPlanificada();
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+
         partida.setId(21L);
         partida.setMontoComprometido(BigDecimal.valueOf(1000));
 
-        when(partidaPlanificadaRepository.findById(21L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(21L, 1L)).thenReturn(Optional.of(partida));
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         when(partidaPlanificadaRepository.save(partida)).thenReturn(partida);
 
         PartidaPlanificada actualizada =
@@ -123,10 +144,15 @@ class PartidaPlanificadaServiceJpaTest {
     @Test
     void actualizarMontoComprometido_DebePermitirPorcentajeNegativoHastaMenosCien() {
         PartidaPlanificada partida = new PartidaPlanificada();
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+
         partida.setId(22L);
         partida.setMontoComprometido(BigDecimal.valueOf(1000));
 
-        when(partidaPlanificadaRepository.findById(22L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(22L, 1L)).thenReturn(Optional.of(partida));
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         when(partidaPlanificadaRepository.save(partida)).thenReturn(partida);
 
         PartidaPlanificada actualizada =
@@ -138,10 +164,12 @@ class PartidaPlanificadaServiceJpaTest {
     @Test
     void actualizarMontoComprometido_DebeFallarCuandoNoSeEnviaMontoNiPorcentaje() {
         PartidaPlanificada partida = new PartidaPlanificada();
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+
         partida.setId(23L);
         partida.setMontoComprometido(BigDecimal.valueOf(1000));
 
-        when(partidaPlanificadaRepository.findById(23L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(23L, 1L)).thenReturn(Optional.of(partida));
 
         assertThatThrownBy(() -> partidaPlanificadaServiceJpa.actualizarMontoComprometido(23L, null, null))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -151,10 +179,12 @@ class PartidaPlanificadaServiceJpaTest {
     @Test
     void actualizarMontoComprometido_DebeFallarCuandoPorcentajeEsMenorAMenosCien() {
         PartidaPlanificada partida = new PartidaPlanificada();
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+
         partida.setId(24L);
         partida.setMontoComprometido(BigDecimal.valueOf(1000));
 
-        when(partidaPlanificadaRepository.findById(24L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(24L, 1L)).thenReturn(Optional.of(partida));
 
         assertThatThrownBy(() ->
                         partidaPlanificadaServiceJpa.actualizarMontoComprometido(24L, null, BigDecimal.valueOf(-100.01)))
@@ -165,10 +195,12 @@ class PartidaPlanificadaServiceJpaTest {
     @Test
     void actualizarMontoComprometido_DebeFallarCuandoSeEnviaMontoYPorcentaje() {
         PartidaPlanificada partida = new PartidaPlanificada();
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+
         partida.setId(25L);
         partida.setMontoComprometido(BigDecimal.valueOf(1000));
 
-        when(partidaPlanificadaRepository.findById(25L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(25L, 1L)).thenReturn(Optional.of(partida));
 
         assertThatThrownBy(() -> partidaPlanificadaServiceJpa.actualizarMontoComprometido(
                         25L, BigDecimal.valueOf(800), BigDecimal.valueOf(10)))
@@ -180,12 +212,18 @@ class PartidaPlanificadaServiceJpaTest {
     @Test
     void create_DebeFallarCuandoHayAutoreferencia() {
         PartidaPlanificada partida = new PartidaPlanificada();
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+
         partida.setId(1L);
 
         PartidaPlanificada origen = new PartidaPlanificada();
         origen.setId(1L);
 
         partida.setPartidaOrigen(origen);
+
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
 
         assertThatThrownBy(() -> partidaPlanificadaServiceJpa.create(partida))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -195,6 +233,8 @@ class PartidaPlanificadaServiceJpaTest {
     @Test
     void create_DebeFallarCuandoHayCicloDeDosNodos() {
         PartidaPlanificada partida = new PartidaPlanificada();
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+
         partida.setId(1L);
 
         PartidaPlanificada b = new PartidaPlanificada();
@@ -206,8 +246,12 @@ class PartidaPlanificadaServiceJpaTest {
         partida.setPartidaOrigen(b);
         b.setPartidaOrigen(a);
 
-        when(partidaPlanificadaRepository.findById(2L)).thenReturn(Optional.of(b));
-        when(partidaPlanificadaRepository.findById(1L)).thenReturn(Optional.of(a));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(2L, 1L)).thenReturn(Optional.of(b));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(1L, 1L)).thenReturn(Optional.of(a));
+
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
 
         assertThatThrownBy(() -> partidaPlanificadaServiceJpa.create(partida))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -217,6 +261,8 @@ class PartidaPlanificadaServiceJpaTest {
     @Test
     void create_DebeFallarCuandoHayCicloDeTresNodos() {
         PartidaPlanificada partida = new PartidaPlanificada();
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+
         partida.setId(1L);
 
         PartidaPlanificada b = new PartidaPlanificada();
@@ -232,9 +278,13 @@ class PartidaPlanificadaServiceJpaTest {
         b.setPartidaOrigen(c);
         c.setPartidaOrigen(a);
 
-        when(partidaPlanificadaRepository.findById(2L)).thenReturn(Optional.of(b));
-        when(partidaPlanificadaRepository.findById(3L)).thenReturn(Optional.of(c));
-        when(partidaPlanificadaRepository.findById(1L)).thenReturn(Optional.of(a));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(2L, 1L)).thenReturn(Optional.of(b));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(3L, 1L)).thenReturn(Optional.of(c));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(1L, 1L)).thenReturn(Optional.of(a));
+
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
 
         assertThatThrownBy(() -> partidaPlanificadaServiceJpa.create(partida))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -244,6 +294,8 @@ class PartidaPlanificadaServiceJpaTest {
     @Test
     void create_DebePermitirJerarquiaSinCiclos() {
         PartidaPlanificada partida = new PartidaPlanificada();
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+
         partida.setId(1L);
 
         PartidaPlanificada b = new PartidaPlanificada();
@@ -255,8 +307,11 @@ class PartidaPlanificadaServiceJpaTest {
         partida.setPartidaOrigen(b);
         b.setPartidaOrigen(c);
 
-        when(partidaPlanificadaRepository.findById(2L)).thenReturn(Optional.of(b));
-        when(partidaPlanificadaRepository.findById(3L)).thenReturn(Optional.of(c));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(2L, 1L)).thenReturn(Optional.of(b));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(3L, 1L)).thenReturn(Optional.of(c));
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         when(partidaPlanificadaRepository.save(partida)).thenReturn(partida);
 
         PartidaPlanificada resultado = partidaPlanificadaServiceJpa.create(partida);
@@ -266,8 +321,13 @@ class PartidaPlanificadaServiceJpaTest {
 
     @Test
     void create_DebePersistirConsolidadoEnFalsePorDefecto() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+
         PartidaPlanificada partida = new PartidaPlanificada();
 
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         when(partidaPlanificadaRepository.save(partida)).thenReturn(partida);
 
         PartidaPlanificada resultado = partidaPlanificadaServiceJpa.create(partida);

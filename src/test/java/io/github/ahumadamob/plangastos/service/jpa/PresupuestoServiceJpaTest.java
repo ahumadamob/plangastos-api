@@ -9,9 +9,12 @@ import static org.mockito.Mockito.when;
 
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
+import io.github.ahumadamob.plangastos.entity.Usuario;
 import io.github.ahumadamob.plangastos.exception.BusinessValidationException;
 import io.github.ahumadamob.plangastos.repository.PartidaPlanificadaRepository;
 import io.github.ahumadamob.plangastos.repository.PresupuestoRepository;
+import io.github.ahumadamob.plangastos.repository.UsuarioRepository;
+import io.github.ahumadamob.plangastos.security.CurrentUserService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -31,11 +34,22 @@ class PresupuestoServiceJpaTest {
     @Mock
     private PartidaPlanificadaRepository partidaPlanificadaRepository;
 
+    @Mock
+    private UsuarioRepository usuarioRepository;
+
+    @Mock
+    private CurrentUserService currentUserService;
+
     @InjectMocks
     private PresupuestoServiceJpa presupuestoServiceJpa;
 
     @Test
     void create_CuandoNoHayFechas_DebePermitirPersistir() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(java.util.Optional.of(usuario));
+
         Presupuesto presupuesto = new Presupuesto();
 
         when(presupuestoRepository.save(presupuesto)).thenReturn(presupuesto);
@@ -48,6 +62,11 @@ class PresupuestoServiceJpaTest {
 
     @Test
     void create_CuandoSoloHayUnaFecha_DebePermitirPersistir() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(java.util.Optional.of(usuario));
+
         Presupuesto presupuesto = new Presupuesto();
         presupuesto.setFechaDesde(LocalDate.of(2025, 1, 1));
 
@@ -61,6 +80,11 @@ class PresupuestoServiceJpaTest {
 
     @Test
     void create_CuandoElRangoEsValido_DebePermitirPersistir() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(java.util.Optional.of(usuario));
+
         Presupuesto presupuesto = new Presupuesto();
         presupuesto.setFechaDesde(LocalDate.of(2025, 1, 1));
         presupuesto.setFechaHasta(LocalDate.of(2025, 1, 31));
@@ -75,6 +99,11 @@ class PresupuestoServiceJpaTest {
 
     @Test
     void create_CuandoElRangoEsInvalido_DebeLanzarBusinessValidationException() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(java.util.Optional.of(usuario));
+
         Presupuesto presupuesto = new Presupuesto();
         presupuesto.setFechaDesde(LocalDate.of(2025, 2, 1));
         presupuesto.setFechaHasta(LocalDate.of(2025, 1, 31));
@@ -89,6 +118,11 @@ class PresupuestoServiceJpaTest {
 
     @Test
     void create_DebePersistirInactivoEnFalsePorDefecto() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(java.util.Optional.of(usuario));
+
         Presupuesto presupuesto = new Presupuesto();
 
         when(presupuestoRepository.save(presupuesto)).thenReturn(presupuesto);
@@ -100,6 +134,11 @@ class PresupuestoServiceJpaTest {
 
     @Test
     void create_WhenNoPresupuestoOrigen_ShouldNotCopiarPartidas() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(java.util.Optional.of(usuario));
+
         Presupuesto presupuesto = new Presupuesto();
 
         when(presupuestoRepository.save(presupuesto)).thenReturn(presupuesto);
@@ -107,18 +146,25 @@ class PresupuestoServiceJpaTest {
         presupuestoServiceJpa.create(presupuesto);
 
         verify(presupuestoRepository).save(presupuesto);
-        verify(partidaPlanificadaRepository, never()).findByPresupuestoId(any());
+        verify(partidaPlanificadaRepository, never()).findByPresupuestoIdAndUsuarioId(any(), any());
         verify(partidaPlanificadaRepository, never()).saveAll(any());
     }
 
     @Test
     void create_WhenTienePresupuestoOrigen_ShouldCopiarPartidasConFechaAjustada() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(java.util.Optional.of(usuario));
+
         Presupuesto presupuestoOrigen = new Presupuesto();
+        presupuestoOrigen.setUsuario(usuario);
         presupuestoOrigen.setId(1L);
         presupuestoOrigen.setFechaDesde(LocalDate.of(2025, 3, 1));
 
         Presupuesto nuevoPresupuesto = new Presupuesto();
         nuevoPresupuesto.setPresupuestoOrigen(presupuestoOrigen);
+        nuevoPresupuesto.setUsuario(usuario);
         nuevoPresupuesto.setFechaDesde(LocalDate.of(2025, 10, 1));
 
         PartidaPlanificada partidaA = new PartidaPlanificada();
@@ -137,7 +183,7 @@ class PresupuestoServiceJpaTest {
                     presupuesto.setId(2L);
                     return presupuesto;
                 });
-        when(partidaPlanificadaRepository.findByPresupuestoId(1L)).thenReturn(List.of(partidaA, partidaB));
+        when(partidaPlanificadaRepository.findByPresupuestoIdAndUsuarioId(1L, 1L)).thenReturn(List.of(partidaA, partidaB));
 
         presupuestoServiceJpa.create(nuevoPresupuesto);
 
@@ -164,12 +210,19 @@ class PresupuestoServiceJpaTest {
 
     @Test
     void create_WhenPartidaTieneCuotas_DebeAjustarCuotaYExcluirLasQueSuperanCantidad() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(java.util.Optional.of(usuario));
+
         Presupuesto presupuestoOrigen = new Presupuesto();
+        presupuestoOrigen.setUsuario(usuario);
         presupuestoOrigen.setId(3L);
         presupuestoOrigen.setFechaDesde(LocalDate.of(2025, 1, 1));
 
         Presupuesto nuevoPresupuesto = new Presupuesto();
         nuevoPresupuesto.setPresupuestoOrigen(presupuestoOrigen);
+        nuevoPresupuesto.setUsuario(usuario);
         nuevoPresupuesto.setFechaDesde(LocalDate.of(2025, 4, 1)); // +3 meses
 
         PartidaPlanificada partidaConCuotaValida = new PartidaPlanificada();
@@ -192,7 +245,7 @@ class PresupuestoServiceJpaTest {
                     presupuesto.setId(4L);
                     return presupuesto;
                 });
-        when(partidaPlanificadaRepository.findByPresupuestoId(3L))
+        when(partidaPlanificadaRepository.findByPresupuestoIdAndUsuarioId(3L, 1L))
                 .thenReturn(List.of(partidaConCuotaValida, partidaQueSuperaCantidad));
 
         presupuestoServiceJpa.create(nuevoPresupuesto);
@@ -212,6 +265,11 @@ class PresupuestoServiceJpaTest {
 
     @Test
     void create_DebeFallarCuandoHayAutoreferencia() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(java.util.Optional.of(usuario));
+
         Presupuesto presupuesto = new Presupuesto();
         presupuesto.setId(10L);
         Presupuesto origen = new Presupuesto();
@@ -225,6 +283,11 @@ class PresupuestoServiceJpaTest {
 
     @Test
     void create_DebeFallarCuandoHayCicloDeDosNodos() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(java.util.Optional.of(usuario));
+
         Presupuesto presupuesto = new Presupuesto();
         presupuesto.setId(1L);
 
@@ -237,8 +300,8 @@ class PresupuestoServiceJpaTest {
         presupuesto.setPresupuestoOrigen(origen);
         origen.setPresupuestoOrigen(ancestro);
 
-        when(presupuestoRepository.findById(2L)).thenReturn(java.util.Optional.of(origen));
-        when(presupuestoRepository.findById(1L)).thenReturn(java.util.Optional.of(ancestro));
+        when(presupuestoRepository.findByIdAndUsuarioId(2L, 1L)).thenReturn(java.util.Optional.of(origen));
+        when(presupuestoRepository.findByIdAndUsuarioId(1L, 1L)).thenReturn(java.util.Optional.of(ancestro));
 
         assertThatThrownBy(() -> presupuestoServiceJpa.create(presupuesto))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -247,6 +310,11 @@ class PresupuestoServiceJpaTest {
 
     @Test
     void create_DebeFallarCuandoHayCicloDeTresNodos() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(java.util.Optional.of(usuario));
+
         Presupuesto presupuesto = new Presupuesto();
         presupuesto.setId(1L);
 
@@ -263,9 +331,9 @@ class PresupuestoServiceJpaTest {
         b.setPresupuestoOrigen(c);
         c.setPresupuestoOrigen(a);
 
-        when(presupuestoRepository.findById(2L)).thenReturn(java.util.Optional.of(b));
-        when(presupuestoRepository.findById(3L)).thenReturn(java.util.Optional.of(c));
-        when(presupuestoRepository.findById(1L)).thenReturn(java.util.Optional.of(a));
+        when(presupuestoRepository.findByIdAndUsuarioId(2L, 1L)).thenReturn(java.util.Optional.of(b));
+        when(presupuestoRepository.findByIdAndUsuarioId(3L, 1L)).thenReturn(java.util.Optional.of(c));
+        when(presupuestoRepository.findByIdAndUsuarioId(1L, 1L)).thenReturn(java.util.Optional.of(a));
 
         assertThatThrownBy(() -> presupuestoServiceJpa.create(presupuesto))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -274,6 +342,11 @@ class PresupuestoServiceJpaTest {
 
     @Test
     void create_DebePermitirJerarquiaSinCiclos() {
+        when(currentUserService.getCurrentUserId()).thenReturn(1L);
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(usuarioRepository.findById(1L)).thenReturn(java.util.Optional.of(usuario));
+
         Presupuesto presupuesto = new Presupuesto();
         presupuesto.setId(10L);
 
@@ -286,10 +359,10 @@ class PresupuestoServiceJpaTest {
         presupuesto.setPresupuestoOrigen(origen);
         origen.setPresupuestoOrigen(ancestro);
 
-        when(presupuestoRepository.findById(20L)).thenReturn(java.util.Optional.of(origen));
-        when(presupuestoRepository.findById(30L)).thenReturn(java.util.Optional.of(ancestro));
+        when(presupuestoRepository.findByIdAndUsuarioId(20L, 1L)).thenReturn(java.util.Optional.of(origen));
+        when(presupuestoRepository.findByIdAndUsuarioId(30L, 1L)).thenReturn(java.util.Optional.of(ancestro));
         when(presupuestoRepository.save(presupuesto)).thenReturn(presupuesto);
-        when(partidaPlanificadaRepository.findByPresupuestoId(20L)).thenReturn(List.of());
+        when(partidaPlanificadaRepository.findByPresupuestoIdAndUsuarioId(20L, 1L)).thenReturn(List.of());
 
         Presupuesto resultado = presupuestoServiceJpa.create(presupuesto);
 
