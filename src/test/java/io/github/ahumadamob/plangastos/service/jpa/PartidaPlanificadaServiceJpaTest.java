@@ -176,4 +176,92 @@ class PartidaPlanificadaServiceJpaTest {
                 .hasMessage("Solo debe enviar montoComprometido o porcentaje, no ambos");
     }
 
+
+    @Test
+    void create_DebeFallarCuandoHayAutoreferencia() {
+        PartidaPlanificada partida = new PartidaPlanificada();
+        partida.setId(1L);
+
+        PartidaPlanificada origen = new PartidaPlanificada();
+        origen.setId(1L);
+
+        partida.setPartidaOrigen(origen);
+
+        assertThatThrownBy(() -> partidaPlanificadaServiceJpa.create(partida))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Se detectó un ciclo en partidaOrigen");
+    }
+
+    @Test
+    void create_DebeFallarCuandoHayCicloDeDosNodos() {
+        PartidaPlanificada partida = new PartidaPlanificada();
+        partida.setId(1L);
+
+        PartidaPlanificada b = new PartidaPlanificada();
+        b.setId(2L);
+
+        PartidaPlanificada a = new PartidaPlanificada();
+        a.setId(1L);
+
+        partida.setPartidaOrigen(b);
+        b.setPartidaOrigen(a);
+
+        when(partidaPlanificadaRepository.findById(2L)).thenReturn(Optional.of(b));
+        when(partidaPlanificadaRepository.findById(1L)).thenReturn(Optional.of(a));
+
+        assertThatThrownBy(() -> partidaPlanificadaServiceJpa.create(partida))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Se detectó un ciclo en partidaOrigen");
+    }
+
+    @Test
+    void create_DebeFallarCuandoHayCicloDeTresNodos() {
+        PartidaPlanificada partida = new PartidaPlanificada();
+        partida.setId(1L);
+
+        PartidaPlanificada b = new PartidaPlanificada();
+        b.setId(2L);
+
+        PartidaPlanificada c = new PartidaPlanificada();
+        c.setId(3L);
+
+        PartidaPlanificada a = new PartidaPlanificada();
+        a.setId(1L);
+
+        partida.setPartidaOrigen(b);
+        b.setPartidaOrigen(c);
+        c.setPartidaOrigen(a);
+
+        when(partidaPlanificadaRepository.findById(2L)).thenReturn(Optional.of(b));
+        when(partidaPlanificadaRepository.findById(3L)).thenReturn(Optional.of(c));
+        when(partidaPlanificadaRepository.findById(1L)).thenReturn(Optional.of(a));
+
+        assertThatThrownBy(() -> partidaPlanificadaServiceJpa.create(partida))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Se detectó un ciclo en partidaOrigen");
+    }
+
+    @Test
+    void create_DebePermitirJerarquiaSinCiclos() {
+        PartidaPlanificada partida = new PartidaPlanificada();
+        partida.setId(1L);
+
+        PartidaPlanificada b = new PartidaPlanificada();
+        b.setId(2L);
+
+        PartidaPlanificada c = new PartidaPlanificada();
+        c.setId(3L);
+
+        partida.setPartidaOrigen(b);
+        b.setPartidaOrigen(c);
+
+        when(partidaPlanificadaRepository.findById(2L)).thenReturn(Optional.of(b));
+        when(partidaPlanificadaRepository.findById(3L)).thenReturn(Optional.of(c));
+        when(partidaPlanificadaRepository.save(partida)).thenReturn(partida);
+
+        PartidaPlanificada resultado = partidaPlanificadaServiceJpa.create(partida);
+
+        assertThat(resultado).isSameAs(partida);
+    }
+
 }

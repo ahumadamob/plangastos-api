@@ -7,9 +7,11 @@ import io.github.ahumadamob.plangastos.repository.PresupuestoRepository;
 import io.github.ahumadamob.plangastos.service.PresupuestoService;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -42,6 +44,7 @@ public class PresupuestoServiceJpa implements PresupuestoService {
 
     @Override
     public Presupuesto create(Presupuesto presupuesto) {
+        validarJerarquiaSinCiclos(presupuesto);
         Presupuesto nuevoPresupuesto = presupuestoRepository.save(presupuesto);
 
         if (presupuesto.getPresupuestoOrigen() != null) {
@@ -54,12 +57,31 @@ public class PresupuestoServiceJpa implements PresupuestoService {
     @Override
     public Presupuesto update(Long id, Presupuesto presupuesto) {
         presupuesto.setId(id);
+        validarJerarquiaSinCiclos(presupuesto);
         return presupuestoRepository.save(presupuesto);
     }
 
     @Override
     public void delete(Long id) {
         presupuestoRepository.deleteById(id);
+    }
+
+    private void validarJerarquiaSinCiclos(Presupuesto presupuesto) {
+        Set<Long> visitados = new HashSet<>();
+        if (presupuesto.getId() != null) {
+            visitados.add(presupuesto.getId());
+        }
+
+        Presupuesto actual = presupuesto.getPresupuestoOrigen();
+        while (actual != null) {
+            Long actualId = actual.getId();
+            if (actualId != null && !visitados.add(actualId)) {
+                throw new IllegalArgumentException("Se detectó un ciclo en presupuestoOrigen");
+            }
+            actual = actualId != null ? presupuestoRepository.findById(actualId).orElse(actual.getPresupuestoOrigen()) : actual.getPresupuestoOrigen();
+        }
+
+        presupuesto.validarJerarquiaSinCiclos();
     }
 
     private void copiarPartidasPlanificadas(Presupuesto nuevoPresupuesto) {

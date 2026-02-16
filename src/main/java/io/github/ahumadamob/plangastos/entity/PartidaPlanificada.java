@@ -3,7 +3,9 @@ package io.github.ahumadamob.plangastos.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -105,5 +107,21 @@ public class PartidaPlanificada extends RegistroPresupuesto {
 
     public void setTransacciones(List<Transaccion> transacciones) {
         this.transacciones = transacciones;
+    }
+
+    public void validarJerarquiaSinCiclos() {
+        Set<Long> visitados = new HashSet<>();
+        if (getId() != null) {
+            visitados.add(getId());
+        }
+
+        PartidaPlanificada actual = partidaOrigen;
+        while (actual != null) {
+            Long actualId = actual.getId();
+            if (actualId != null && !visitados.add(actualId)) {
+                throw new IllegalArgumentException("La jerarquía de partida planificada contiene una autoreferencia o ciclo");
+            }
+            actual = actual.getPartidaOrigen();
+        }
     }
 }

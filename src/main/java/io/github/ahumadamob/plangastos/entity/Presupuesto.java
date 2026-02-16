@@ -1,6 +1,8 @@
 package io.github.ahumadamob.plangastos.entity;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -66,5 +68,21 @@ public class Presupuesto extends BaseEntity {
 
     public void setPresupuestoOrigen(Presupuesto presupuestoOrigen) {
         this.presupuestoOrigen = presupuestoOrigen;
+    }
+
+    public void validarJerarquiaSinCiclos() {
+        Set<Long> visitados = new HashSet<>();
+        if (getId() != null) {
+            visitados.add(getId());
+        }
+
+        Presupuesto actual = presupuestoOrigen;
+        while (actual != null) {
+            Long actualId = actual.getId();
+            if (actualId != null && !visitados.add(actualId)) {
+                throw new IllegalArgumentException("La jerarquía de presupuesto contiene una autoreferencia o ciclo");
+            }
+            actual = actual.getPresupuestoOrigen();
+        }
     }
 }

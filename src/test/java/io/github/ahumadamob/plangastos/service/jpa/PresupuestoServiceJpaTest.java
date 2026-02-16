@@ -2,6 +2,7 @@ package io.github.ahumadamob.plangastos.service.jpa;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -143,4 +144,91 @@ class PresupuestoServiceJpaTest {
         assertThat(copia.getCantidadCuotas()).isEqualTo(3);
         assertThat(copia.getFechaObjetivo()).isEqualTo(LocalDate.of(2025, 4, 15));
     }
+
+    @Test
+    void create_DebeFallarCuandoHayAutoreferencia() {
+        Presupuesto presupuesto = new Presupuesto();
+        presupuesto.setId(10L);
+        Presupuesto origen = new Presupuesto();
+        origen.setId(10L);
+        presupuesto.setPresupuestoOrigen(origen);
+
+        assertThatThrownBy(() -> presupuestoServiceJpa.create(presupuesto))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Se detectó un ciclo en presupuestoOrigen");
+    }
+
+    @Test
+    void create_DebeFallarCuandoHayCicloDeDosNodos() {
+        Presupuesto presupuesto = new Presupuesto();
+        presupuesto.setId(1L);
+
+        Presupuesto origen = new Presupuesto();
+        origen.setId(2L);
+
+        Presupuesto ancestro = new Presupuesto();
+        ancestro.setId(1L);
+
+        presupuesto.setPresupuestoOrigen(origen);
+        origen.setPresupuestoOrigen(ancestro);
+
+        when(presupuestoRepository.findById(2L)).thenReturn(java.util.Optional.of(origen));
+        when(presupuestoRepository.findById(1L)).thenReturn(java.util.Optional.of(ancestro));
+
+        assertThatThrownBy(() -> presupuestoServiceJpa.create(presupuesto))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Se detectó un ciclo en presupuestoOrigen");
+    }
+
+    @Test
+    void create_DebeFallarCuandoHayCicloDeTresNodos() {
+        Presupuesto presupuesto = new Presupuesto();
+        presupuesto.setId(1L);
+
+        Presupuesto b = new Presupuesto();
+        b.setId(2L);
+
+        Presupuesto c = new Presupuesto();
+        c.setId(3L);
+
+        Presupuesto a = new Presupuesto();
+        a.setId(1L);
+
+        presupuesto.setPresupuestoOrigen(b);
+        b.setPresupuestoOrigen(c);
+        c.setPresupuestoOrigen(a);
+
+        when(presupuestoRepository.findById(2L)).thenReturn(java.util.Optional.of(b));
+        when(presupuestoRepository.findById(3L)).thenReturn(java.util.Optional.of(c));
+        when(presupuestoRepository.findById(1L)).thenReturn(java.util.Optional.of(a));
+
+        assertThatThrownBy(() -> presupuestoServiceJpa.create(presupuesto))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Se detectó un ciclo en presupuestoOrigen");
+    }
+
+    @Test
+    void create_DebePermitirJerarquiaSinCiclos() {
+        Presupuesto presupuesto = new Presupuesto();
+        presupuesto.setId(10L);
+
+        Presupuesto origen = new Presupuesto();
+        origen.setId(20L);
+
+        Presupuesto ancestro = new Presupuesto();
+        ancestro.setId(30L);
+
+        presupuesto.setPresupuestoOrigen(origen);
+        origen.setPresupuestoOrigen(ancestro);
+
+        when(presupuestoRepository.findById(20L)).thenReturn(java.util.Optional.of(origen));
+        when(presupuestoRepository.findById(30L)).thenReturn(java.util.Optional.of(ancestro));
+        when(presupuestoRepository.save(presupuesto)).thenReturn(presupuesto);
+        when(partidaPlanificadaRepository.findByPresupuestoId(20L)).thenReturn(List.of());
+
+        Presupuesto resultado = presupuestoServiceJpa.create(presupuesto);
+
+        assertThat(resultado).isSameAs(presupuesto);
+    }
+
 }
