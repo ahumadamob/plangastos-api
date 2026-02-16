@@ -2,6 +2,7 @@ package io.github.ahumadamob.plangastos.service.jpa;
 
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
+import io.github.ahumadamob.plangastos.exception.BusinessValidationException;
 import io.github.ahumadamob.plangastos.repository.PartidaPlanificadaRepository;
 import io.github.ahumadamob.plangastos.repository.PresupuestoRepository;
 import io.github.ahumadamob.plangastos.service.PresupuestoService;
@@ -44,6 +45,7 @@ public class PresupuestoServiceJpa implements PresupuestoService {
 
     @Override
     public Presupuesto create(Presupuesto presupuesto) {
+        validarRangoFechas(presupuesto);
         validarJerarquiaSinCiclos(presupuesto);
         Presupuesto nuevoPresupuesto = presupuestoRepository.save(presupuesto);
 
@@ -57,6 +59,7 @@ public class PresupuestoServiceJpa implements PresupuestoService {
     @Override
     public Presupuesto update(Long id, Presupuesto presupuesto) {
         presupuesto.setId(id);
+        validarRangoFechas(presupuesto);
         validarJerarquiaSinCiclos(presupuesto);
         return presupuestoRepository.save(presupuesto);
     }
@@ -64,6 +67,15 @@ public class PresupuestoServiceJpa implements PresupuestoService {
     @Override
     public void delete(Long id) {
         presupuestoRepository.deleteById(id);
+    }
+
+    private void validarRangoFechas(Presupuesto presupuesto) {
+        LocalDate fechaDesde = presupuesto.getFechaDesde();
+        LocalDate fechaHasta = presupuesto.getFechaHasta();
+
+        if (fechaDesde != null && fechaHasta != null && fechaDesde.isAfter(fechaHasta)) {
+            throw new BusinessValidationException("fechaDesde debe ser anterior o igual a fechaHasta");
+        }
     }
 
     private void validarJerarquiaSinCiclos(Presupuesto presupuesto) {

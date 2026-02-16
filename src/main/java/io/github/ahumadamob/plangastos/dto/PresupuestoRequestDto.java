@@ -1,5 +1,6 @@
 package io.github.ahumadamob.plangastos.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import java.time.LocalDate;
 
 public class PresupuestoRequestDto {
@@ -49,5 +50,13 @@ public class PresupuestoRequestDto {
 
     public void setPresupuestoOrigen_id(Long presupuestoOrigen_id) {
         this.presupuestoOrigen_id = presupuestoOrigen_id;
+    }
+
+    @AssertTrue(message = "fechaDesde debe ser anterior o igual a fechaHasta")
+    public boolean isRangoFechasValido() {
+        if (fechaDesde == null || fechaHasta == null) {
+            return true;
+        }
+        return !fechaDesde.isAfter(fechaHasta);
     }
 }

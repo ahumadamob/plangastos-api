@@ -10,6 +10,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
@@ -84,5 +85,13 @@ public class Presupuesto extends BaseEntity {
             }
             actual = actual.getPresupuestoOrigen();
         }
+    }
+
+    @AssertTrue(message = "fechaDesde debe ser anterior o igual a fechaHasta")
+    public boolean isRangoFechasValido() {
+        if (fechaDesde == null || fechaHasta == null) {
+            return true;
+        }
+        return !fechaDesde.isAfter(fechaHasta);
     }
 }
