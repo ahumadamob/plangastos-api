@@ -1,5 +1,6 @@
 package io.github.ahumadamob.plangastos.controller;
 
+import io.github.ahumadamob.plangastos.auth.CurrentUser;
 import io.github.ahumadamob.plangastos.dto.CuentaFinancieraRequestDto;
 import io.github.ahumadamob.plangastos.dto.CuentaFinancieraResponseDto;
 import io.github.ahumadamob.plangastos.dto.CuentaFinancieraSaldoDto;
@@ -10,6 +11,7 @@ import io.github.ahumadamob.plangastos.util.ApiResponseFactory;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,16 +37,18 @@ public class CuentaFinancieraController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseSuccessDto<List<CuentaFinancieraResponseDto>>> getAll() {
-        List<CuentaFinancieraResponseDto> data = service.getAll().stream()
+    public ResponseEntity<ApiResponseSuccessDto<List<CuentaFinancieraResponseDto>>> getAll(
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        List<CuentaFinancieraResponseDto> data = service.getAllByUsuarioId(currentUser.id()).stream()
                 .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de cuentas financieras"));
     }
 
     @GetMapping("/saldos")
-    public ResponseEntity<ApiResponseSuccessDto<List<CuentaFinancieraSaldoDto>>> getSaldos() {
-        List<CuentaFinancieraSaldoDto> data = service.getSaldos();
+    public ResponseEntity<ApiResponseSuccessDto<List<CuentaFinancieraSaldoDto>>> getSaldos(
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        List<CuentaFinancieraSaldoDto> data = service.getSaldosByUsuarioId(currentUser.id());
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de saldos por cuenta financiera"));
     }
 

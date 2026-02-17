@@ -1,5 +1,6 @@
 package io.github.ahumadamob.plangastos.controller;
 
+import io.github.ahumadamob.plangastos.auth.CurrentUser;
 import io.github.ahumadamob.plangastos.dto.PresupuestoRequestDto;
 import io.github.ahumadamob.plangastos.dto.PresupuestoDropdownDto;
 import io.github.ahumadamob.plangastos.dto.PresupuestoResponseDto;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,16 +38,18 @@ public class PresupuestoController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseSuccessDto<List<PresupuestoResponseDto>>> getAll() {
-        List<PresupuestoResponseDto> data = service.getAll().stream()
+    public ResponseEntity<ApiResponseSuccessDto<List<PresupuestoResponseDto>>> getAll(
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        List<PresupuestoResponseDto> data = service.getAllByUsuarioId(currentUser.id()).stream()
                 .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de presupuestos"));
     }
 
     @GetMapping("/dropdown")
-    public ResponseEntity<ApiResponseSuccessDto<List<PresupuestoDropdownDto>>> getDropdown() {
-        List<PresupuestoDropdownDto> data = service.getAllOrderByFechaDesdeDesc().stream()
+    public ResponseEntity<ApiResponseSuccessDto<List<PresupuestoDropdownDto>>> getDropdown(
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        List<PresupuestoDropdownDto> data = service.getAllByUsuarioIdOrderByFechaDesdeDesc(currentUser.id()).stream()
                 .map(mapper::entityToDropdownDto)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de presupuestos para dropdown"));

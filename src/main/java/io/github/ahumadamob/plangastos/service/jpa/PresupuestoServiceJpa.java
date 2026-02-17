@@ -29,13 +29,13 @@ public class PresupuestoServiceJpa implements PresupuestoService {
     }
 
     @Override
-    public List<Presupuesto> getAll() {
-        return presupuestoRepository.findByInactivoFalse();
+    public List<Presupuesto> getAllByUsuarioId(Long usuarioId) {
+        return presupuestoRepository.findByUsuarioIdAndInactivoFalse(usuarioId);
     }
 
     @Override
-    public List<Presupuesto> getAllOrderByFechaDesdeDesc() {
-        return presupuestoRepository.findByInactivoFalseOrderByFechaDesdeDesc();
+    public List<Presupuesto> getAllByUsuarioIdOrderByFechaDesdeDesc(Long usuarioId) {
+        return presupuestoRepository.findByUsuarioIdAndInactivoFalseOrderByFechaDesdeDesc(usuarioId);
     }
 
     @Override

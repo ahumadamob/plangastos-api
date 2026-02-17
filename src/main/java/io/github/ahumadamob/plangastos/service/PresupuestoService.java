@@ -5,9 +5,9 @@ import java.util.List;
 
 public interface PresupuestoService {
 
-    List<Presupuesto> getAll();
+    List<Presupuesto> getAllByUsuarioId(Long usuarioId);
 
-    List<Presupuesto> getAllOrderByFechaDesdeDesc();
+    List<Presupuesto> getAllByUsuarioIdOrderByFechaDesdeDesc(Long usuarioId);
 
     Presupuesto getById(Long id);
 

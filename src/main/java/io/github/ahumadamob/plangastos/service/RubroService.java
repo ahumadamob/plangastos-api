@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface RubroService {
 
-    List<Rubro> getAll();
+    List<Rubro> getAllByUsuarioId(Long usuarioId);
 
     Rubro getById(Long id);
 

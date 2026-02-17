@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PartidaPlanificadaService {
 
-    List<PartidaPlanificada> getAll();
+    List<PartidaPlanificada> getAllByUsuarioId(Long usuarioId);
 
     PartidaPlanificada getById(Long id);
 
@@ -16,11 +16,11 @@ public interface PartidaPlanificadaService {
 
     void delete(Long id);
 
-    List<PartidaPlanificada> getIngresosByPresupuestoId(Long presupuestoId);
+    List<PartidaPlanificada> getIngresosByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId);
 
-    List<PartidaPlanificada> getGastosByPresupuestoId(Long presupuestoId);
+    List<PartidaPlanificada> getGastosByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId);
 
-    List<PartidaPlanificada> getAhorroByPresupuestoId(Long presupuestoId);
+    List<PartidaPlanificada> getAhorroByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId);
 
     PartidaPlanificada consolidar(Long id);
 

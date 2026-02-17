@@ -17,13 +17,13 @@ public class CuentaFinancieraServiceJpa implements CuentaFinancieraService {
     }
 
     @Override
-    public List<CuentaFinanciera> getAll() {
-        return cuentaFinancieraRepository.findAll();
+    public List<CuentaFinanciera> getAllByUsuarioId(Long usuarioId) {
+        return cuentaFinancieraRepository.findByUsuarioId(usuarioId);
     }
 
     @Override
-    public List<CuentaFinancieraSaldoDto> getSaldos() {
-        return cuentaFinancieraRepository.findAllSaldos();
+    public List<CuentaFinancieraSaldoDto> getSaldosByUsuarioId(Long usuarioId) {
+        return cuentaFinancieraRepository.findAllSaldosByUsuarioId(usuarioId);
     }
 
     @Override

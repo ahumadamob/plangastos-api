@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface CuentaFinancieraService {
 
-    List<CuentaFinanciera> getAll();
+    List<CuentaFinanciera> getAllByUsuarioId(Long usuarioId);
 
-    List<CuentaFinancieraSaldoDto> getSaldos();
+    List<CuentaFinancieraSaldoDto> getSaldosByUsuarioId(Long usuarioId);
 
     CuentaFinanciera getById(Long id);
 
