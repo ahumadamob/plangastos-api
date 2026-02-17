@@ -18,8 +18,9 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = "rubros")
 public class Rubro extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "usuario_id", nullable = true)
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     @NotNull

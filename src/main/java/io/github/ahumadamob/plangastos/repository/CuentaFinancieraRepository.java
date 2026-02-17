@@ -38,4 +38,7 @@ public interface CuentaFinancieraRepository extends JpaRepository<CuentaFinancie
             order by c.id
             """)
     List<CuentaFinancieraSaldoDto> findAllSaldos();
+
+    long countByUsuarioId(Long usuarioId);
 }
+

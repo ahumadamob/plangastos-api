@@ -5,12 +5,21 @@ import java.time.LocalDate;
 
 public class PresupuestoRequestDto {
 
+    private Long usuario_id;
     private String nombre;
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
     private Boolean inactivo;
     private Long presupuestoOrigen_id;
 
+
+    public Long getUsuario_id() {
+        return usuario_id;
+    }
+
+    public void setUsuario_id(Long usuario_id) {
+        this.usuario_id = usuario_id;
+    }
     public String getNombre() {
         return nombre;
     }

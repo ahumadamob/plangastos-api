@@ -19,6 +19,7 @@ public class PartidaPlanificadaMapper {
 
     public PartidaPlanificada requestToEntity(PartidaPlanificadaRequestDto request) {
         PartidaPlanificada partida = new PartidaPlanificada();
+        partida.setUsuario(mapperHelper.getUsuario(request.getUsuario_id()));
         partida.setPresupuesto(mapperHelper.getPresupuesto(request.getPresupuesto_id()));
         partida.setRubro(mapperHelper.getRubro(request.getRubro_id()));
         partida.setDescripcion(request.getDescripcion());

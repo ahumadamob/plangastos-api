@@ -31,3 +31,6 @@ SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run
 - `dev.user@plangastos.local` / `User123!`
 
 En base de datos se guardan como hashes BCrypt en el seed.
+
+
+La migración `V6__enforce_usuario_not_null_on_core_entities.sql` agrega `usuario_id` obligatorio en `cuentas_financieras`, `rubros`, `presupuestos` y `partidas_planificadas`, rellena registros históricos con un usuario de migración y aplica claves foráneas con `ON DELETE RESTRICT` para impedir eliminar usuarios con datos asociados.

@@ -21,4 +21,7 @@ public interface PartidaPlanificadaRepository extends JpaRepository<PartidaPlani
 
     List<PartidaPlanificada> findByPartidaOrigenIdAndFechaObjetivoGreaterThanEqual(
             Long partidaOrigenId, LocalDate fechaObjetivo);
+
+    long countByUsuarioId(Long usuarioId);
 }
+
