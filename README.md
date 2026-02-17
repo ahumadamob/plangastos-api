@@ -32,5 +32,136 @@ SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run
 
 En base de datos se guardan como hashes BCrypt en el seed.
 
-
 La migración `V6__enforce_usuario_not_null_on_core_entities.sql` agrega `usuario_id` obligatorio en `cuentas_financieras`, `rubros`, `presupuestos` y `partidas_planificadas`, rellena registros históricos nulos o inválidos con un usuario de migración y aplica claves foráneas con `ON DELETE RESTRICT` para impedir eliminar usuarios con datos asociados.
+
+## Contrato API de autenticación
+
+### Endpoints
+
+#### `POST /auth/login`
+
+Request (`application/json`):
+
+```json
+{
+  "email": "dev.user@plangastos.local",
+  "password": "User123!"
+}
+```
+
+Response exitosa (`200 OK`):
+
+```json
+{
+  "success": true,
+  "message": "Login exitoso",
+  "data": {
+    "accessToken": "<jwt>",
+    "tokenType": "Bearer",
+    "expiresAt": "2026-01-01T12:00:00Z"
+  },
+  "timestamp": "2026-01-01T10:00:00Z"
+}
+```
+
+#### `POST /auth/register`
+
+Request (`application/json`):
+
+```json
+{
+  "email": "nuevo.usuario@plangastos.local",
+  "password": "Password123!"
+}
+```
+
+Response exitosa (`200 OK`):
+
+```json
+{
+  "success": true,
+  "message": "Usuario registrado",
+  "data": {
+    "accessToken": "<jwt>",
+    "tokenType": "Bearer",
+    "expiresAt": "2026-01-01T12:00:00Z"
+  },
+  "timestamp": "2026-01-01T10:00:00Z"
+}
+```
+
+### Códigos de error (auth)
+
+Formato de error estándar:
+
+```json
+{
+  "timestamp": "2026-01-01T10:00:00",
+  "status": 401,
+  "error": "Unauthorized",
+  "messages": [
+    {
+      "field": "auth",
+      "message": "Credenciales inválidas"
+    }
+  ],
+  "errorCode": "UNAUTHORIZED",
+  "path": "/auth/login"
+}
+```
+
+Errores relevantes:
+
+- `400 Bad Request`: request inválido (JSON mal formado, validaciones de `email/password`).
+- `401 Unauthorized`: credenciales inválidas, usuario inactivo, token ausente/inválido en rutas protegidas.
+- `403 Forbidden`: usuario autenticado sin permisos para acceder a un recurso.
+- `409 Conflict`: violación de integridad (ej. constraints en base de datos).
+- `422 Unprocessable Entity`: reglas de negocio (ej. email ya registrado en `/auth/register`).
+
+## Autenticación en endpoints protegidos
+
+El front debe enviar el header `Authorization` con esquema Bearer en **cada request protegida**:
+
+```http
+Authorization: Bearer <accessToken>
+```
+
+Si el header no existe, no comienza con `Bearer `, o el JWT es inválido/expirado, la API responde `401 Unauthorized`.
+
+## Contexto de usuario en endpoints de negocio
+
+Los endpoints de negocio protegidos filtran por el usuario autenticado (`@AuthenticationPrincipal CurrentUser`) y **ya no requieren `usuarioId` como query/path param enviado por cliente** para listar/consultar datos del usuario.
+
+Ejemplos:
+
+- `GET /api/v1/presupuesto`
+- `GET /api/v1/rubro`
+- `GET /api/v1/cuenta-financiera`
+- `GET /api/v1/partida-planificada`
+
+## Ejemplos de consumo (login + listado por usuario)
+
+### 1) Login
+
+```bash
+curl -X POST 'http://localhost:8080/auth/login' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "dev.user@plangastos.local",
+    "password": "User123!"
+  }'
+```
+
+### 2) Listado de presupuestos del usuario autenticado
+
+```bash
+curl -X GET 'http://localhost:8080/api/v1/presupuesto' \
+  -H 'Authorization: Bearer <accessToken>'
+```
+
+### 3) Listado de rubros del usuario autenticado
+
+```bash
+curl -X GET 'http://localhost:8080/api/v1/rubro' \
+  -H 'Authorization: Bearer <accessToken>'
+```
