@@ -10,10 +10,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PartidaPlanificadaRepository extends JpaRepository<PartidaPlanificada, Long> {
 
-    List<PartidaPlanificada> findByPresupuestoIdAndRubroNaturaleza(
-            Long presupuestoId, NaturalezaMovimiento naturalezaMovimiento);
+    List<PartidaPlanificada> findByPresupuestoIdAndUsuarioIdAndRubroNaturaleza(
+            Long presupuestoId, Long usuarioId, NaturalezaMovimiento naturalezaMovimiento);
 
     List<PartidaPlanificada> findByPresupuestoId(Long presupuestoId);
+
+    List<PartidaPlanificada> findByUsuarioId(Long usuarioId);
 
     List<PartidaPlanificada> findByPartidaOrigenId(Long partidaOrigenId);
 

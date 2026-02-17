@@ -1,5 +1,6 @@
 package io.github.ahumadamob.plangastos.controller;
 
+import io.github.ahumadamob.plangastos.auth.CurrentUser;
 import io.github.ahumadamob.plangastos.dto.PartidaPlanificadaMontoComprometidoRequestDto;
 import io.github.ahumadamob.plangastos.dto.PartidaPlanificadaRequestDto;
 import io.github.ahumadamob.plangastos.dto.PartidaPlanificadaResponseDto;
@@ -10,6 +11,7 @@ import io.github.ahumadamob.plangastos.util.ApiResponseFactory;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,8 +40,9 @@ public class PartidaPlanificadaController {
 
     @GetMapping("/{presupuesto_id}/ingresos")
     public ResponseEntity<ApiResponseSuccessDto<List<PartidaPlanificadaResponseDto>>> getIngresosByPresupuesto(
-            @PathVariable("presupuesto_id") Long presupuestoId) {
-        List<PartidaPlanificadaResponseDto> data = service.getIngresosByPresupuestoId(presupuestoId).stream()
+            @PathVariable("presupuesto_id") Long presupuestoId,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        List<PartidaPlanificadaResponseDto> data = service.getIngresosByPresupuestoIdAndUsuarioId(presupuestoId, currentUser.id()).stream()
                 .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de ingresos planificados por presupuesto"));
@@ -47,8 +50,9 @@ public class PartidaPlanificadaController {
 
     @GetMapping("/{presupuesto_id}/gastos")
     public ResponseEntity<ApiResponseSuccessDto<List<PartidaPlanificadaResponseDto>>> getGastosByPresupuesto(
-            @PathVariable("presupuesto_id") Long presupuestoId) {
-        List<PartidaPlanificadaResponseDto> data = service.getGastosByPresupuestoId(presupuestoId).stream()
+            @PathVariable("presupuesto_id") Long presupuestoId,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        List<PartidaPlanificadaResponseDto> data = service.getGastosByPresupuestoIdAndUsuarioId(presupuestoId, currentUser.id()).stream()
                 .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de gastos planificados por presupuesto"));
@@ -56,16 +60,18 @@ public class PartidaPlanificadaController {
 
     @GetMapping("/{presupuesto_id}/ahorro")
     public ResponseEntity<ApiResponseSuccessDto<List<PartidaPlanificadaResponseDto>>> getAhorroByPresupuesto(
-            @PathVariable("presupuesto_id") Long presupuestoId) {
-        List<PartidaPlanificadaResponseDto> data = service.getAhorroByPresupuestoId(presupuestoId).stream()
+            @PathVariable("presupuesto_id") Long presupuestoId,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        List<PartidaPlanificadaResponseDto> data = service.getAhorroByPresupuestoIdAndUsuarioId(presupuestoId, currentUser.id()).stream()
                 .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de ahorro planificado por presupuesto"));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseSuccessDto<List<PartidaPlanificadaResponseDto>>> getAll() {
-        List<PartidaPlanificadaResponseDto> data = service.getAll().stream()
+    public ResponseEntity<ApiResponseSuccessDto<List<PartidaPlanificadaResponseDto>>> getAll(
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        List<PartidaPlanificadaResponseDto> data = service.getAllByUsuarioId(currentUser.id()).stream()
                 .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de partidas planificadas"));

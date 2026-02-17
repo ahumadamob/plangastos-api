@@ -28,8 +28,8 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
     }
 
     @Override
-    public List<PartidaPlanificada> getAll() {
-        return partidaPlanificadaRepository.findAll();
+    public List<PartidaPlanificada> getAllByUsuarioId(Long usuarioId) {
+        return partidaPlanificadaRepository.findByUsuarioId(usuarioId);
     }
 
     @Override
@@ -56,21 +56,21 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
     }
 
     @Override
-    public List<PartidaPlanificada> getIngresosByPresupuestoId(Long presupuestoId) {
-        return partidaPlanificadaRepository.findByPresupuestoIdAndRubroNaturaleza(
-                presupuestoId, NaturalezaMovimiento.INGRESO);
+    public List<PartidaPlanificada> getIngresosByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId) {
+        return partidaPlanificadaRepository.findByPresupuestoIdAndUsuarioIdAndRubroNaturaleza(
+                presupuestoId, usuarioId, NaturalezaMovimiento.INGRESO);
     }
 
     @Override
-    public List<PartidaPlanificada> getGastosByPresupuestoId(Long presupuestoId) {
-        return partidaPlanificadaRepository.findByPresupuestoIdAndRubroNaturaleza(
-                presupuestoId, NaturalezaMovimiento.GASTO);
+    public List<PartidaPlanificada> getGastosByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId) {
+        return partidaPlanificadaRepository.findByPresupuestoIdAndUsuarioIdAndRubroNaturaleza(
+                presupuestoId, usuarioId, NaturalezaMovimiento.GASTO);
     }
 
     @Override
-    public List<PartidaPlanificada> getAhorroByPresupuestoId(Long presupuestoId) {
-        return partidaPlanificadaRepository.findByPresupuestoIdAndRubroNaturaleza(
-                presupuestoId, NaturalezaMovimiento.RESERVA_AHORRO);
+    public List<PartidaPlanificada> getAhorroByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId) {
+        return partidaPlanificadaRepository.findByPresupuestoIdAndUsuarioIdAndRubroNaturaleza(
+                presupuestoId, usuarioId, NaturalezaMovimiento.RESERVA_AHORRO);
     }
 
     @Override

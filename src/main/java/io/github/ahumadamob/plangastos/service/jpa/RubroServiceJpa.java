@@ -18,8 +18,8 @@ public class RubroServiceJpa implements RubroService {
     }
 
     @Override
-    public List<Rubro> getAll() {
-        return rubroRepository.findAll();
+    public List<Rubro> getAllByUsuarioId(Long usuarioId) {
+        return rubroRepository.findByUsuarioId(usuarioId);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package io.github.ahumadamob.plangastos.controller;
 
+import io.github.ahumadamob.plangastos.auth.CurrentUser;
 import io.github.ahumadamob.plangastos.dto.RubroRequestDto;
 import io.github.ahumadamob.plangastos.dto.RubroResponseDto;
 import io.github.ahumadamob.plangastos.dto.common.ApiResponseSuccessDto;
@@ -9,6 +10,7 @@ import io.github.ahumadamob.plangastos.util.ApiResponseFactory;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,8 +36,9 @@ public class RubroController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseSuccessDto<List<RubroResponseDto>>> getAll() {
-        List<RubroResponseDto> data = service.getAll().stream()
+    public ResponseEntity<ApiResponseSuccessDto<List<RubroResponseDto>>> getAll(
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        List<RubroResponseDto> data = service.getAllByUsuarioId(currentUser.id()).stream()
                 .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de rubros"));
