@@ -10,11 +10,11 @@ public interface CuentaFinancieraService {
 
     List<CuentaFinancieraSaldoDto> getSaldosByUsuarioId(Long usuarioId);
 
-    CuentaFinanciera getById(Long id);
+    CuentaFinanciera getByIdAndUsuarioId(Long id, Long usuarioId);
 
     CuentaFinanciera create(CuentaFinanciera cuentaFinanciera);
 
-    CuentaFinanciera update(Long id, CuentaFinanciera cuentaFinanciera);
+    CuentaFinanciera update(Long id, Long usuarioId, CuentaFinanciera cuentaFinanciera);
 
-    void delete(Long id);
+    void delete(Long id, Long usuarioId);
 }

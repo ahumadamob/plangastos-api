@@ -3,6 +3,7 @@ package io.github.ahumadamob.plangastos.service.jpa;
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
 import io.github.ahumadamob.plangastos.exception.BusinessValidationException;
+import io.github.ahumadamob.plangastos.exception.ResourceNotFoundException;
 import io.github.ahumadamob.plangastos.repository.PartidaPlanificadaRepository;
 import io.github.ahumadamob.plangastos.repository.PresupuestoRepository;
 import io.github.ahumadamob.plangastos.service.PresupuestoService;
@@ -39,8 +40,8 @@ public class PresupuestoServiceJpa implements PresupuestoService {
     }
 
     @Override
-    public Presupuesto getById(Long id) {
-        return presupuestoRepository.findById(id).orElse(null);
+    public Presupuesto getByIdAndUsuarioId(Long id, Long usuarioId) {
+        return getByIdOwnedByUsuario(id, usuarioId);
     }
 
     @Override
@@ -57,7 +58,8 @@ public class PresupuestoServiceJpa implements PresupuestoService {
     }
 
     @Override
-    public Presupuesto update(Long id, Presupuesto presupuesto) {
+    public Presupuesto update(Long id, Long usuarioId, Presupuesto presupuesto) {
+        getByIdOwnedByUsuario(id, usuarioId);
         presupuesto.setId(id);
         validarRangoFechas(presupuesto);
         validarJerarquiaSinCiclos(presupuesto);
@@ -65,8 +67,14 @@ public class PresupuestoServiceJpa implements PresupuestoService {
     }
 
     @Override
-    public void delete(Long id) {
-        presupuestoRepository.deleteById(id);
+    public void delete(Long id, Long usuarioId) {
+        Presupuesto presupuesto = getByIdOwnedByUsuario(id, usuarioId);
+        presupuestoRepository.delete(presupuesto);
+    }
+
+    private Presupuesto getByIdOwnedByUsuario(Long id, Long usuarioId) {
+        return presupuestoRepository.findByIdAndUsuarioId(id, usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Presupuesto no encontrado con id " + id));
     }
 
     private void validarRangoFechas(Presupuesto presupuesto) {

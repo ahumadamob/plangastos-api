@@ -45,8 +45,10 @@ public class RubroController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponseSuccessDto<RubroResponseDto>> getById(@PathVariable Long id) {
-        RubroResponseDto data = mapper.entityToResponse(service.getById(id));
+    public ResponseEntity<ApiResponseSuccessDto<RubroResponseDto>> getById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        RubroResponseDto data = mapper.entityToResponse(service.getByIdAndUsuarioId(id, currentUser.id()));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Detalle de rubro"));
     }
 
@@ -60,15 +62,19 @@ public class RubroController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<RubroResponseDto>> update(
-            @PathVariable Long id, @RequestBody RubroRequestDto request) {
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser,
+            @RequestBody RubroRequestDto request) {
         RubroResponseDto data = mapper.entityToResponse(
-                service.update(id, mapper.requestToEntity(request)));
+                service.update(id, currentUser.id(), mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Rubro actualizado"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponseSuccessDto<Void>> delete(@PathVariable Long id) {
-        service.delete(id);
+    public ResponseEntity<ApiResponseSuccessDto<Void>> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        service.delete(id, currentUser.id());
         return ResponseEntity.ok(ApiResponseFactory.success(null, "Rubro eliminado"));
     }
 }
