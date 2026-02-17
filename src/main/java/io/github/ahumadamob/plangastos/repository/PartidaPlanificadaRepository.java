@@ -18,6 +18,11 @@ public interface PartidaPlanificadaRepository extends JpaRepository<PartidaPlani
     @Deprecated
     List<PartidaPlanificada> findByPresupuestoId(Long presupuestoId);
 
+    @Deprecated
+    default List<PartidaPlanificada> findByPresupuestoId(long presupuestoId) {
+        return findByPresupuestoId(Long.valueOf(presupuestoId));
+    }
+
     /**
      * Compatibilidad temporal para tests/IDE que todavía usan la firma anterior sin ownership.
      * Evitar su uso en código nuevo.
@@ -25,6 +30,12 @@ public interface PartidaPlanificadaRepository extends JpaRepository<PartidaPlani
     @Deprecated
     List<PartidaPlanificada> findByPartidaOrigenIdAndFechaObjetivoGreaterThanEqual(
             Long partidaOrigenId, LocalDate fechaObjetivo);
+
+    @Deprecated
+    default List<PartidaPlanificada> findByPartidaOrigenIdAndFechaObjetivoGreaterThanEqual(
+            long partidaOrigenId, LocalDate fechaObjetivo) {
+        return findByPartidaOrigenIdAndFechaObjetivoGreaterThanEqual(Long.valueOf(partidaOrigenId), fechaObjetivo);
+    }
 
     List<PartidaPlanificada> findByUsuarioId(Long usuarioId);
 
