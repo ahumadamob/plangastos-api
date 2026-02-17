@@ -39,10 +39,25 @@ PREPARE stmt FROM @partidas_usuario_column_sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
-UPDATE cuentas_financieras SET usuario_id = @fallback_usuario_id WHERE usuario_id IS NULL;
-UPDATE rubros SET usuario_id = @fallback_usuario_id WHERE usuario_id IS NULL;
-UPDATE presupuestos SET usuario_id = @fallback_usuario_id WHERE usuario_id IS NULL;
-UPDATE partidas_planificadas SET usuario_id = @fallback_usuario_id WHERE usuario_id IS NULL;
+UPDATE cuentas_financieras cf
+LEFT JOIN usuarios u ON u.id = cf.usuario_id
+SET cf.usuario_id = @fallback_usuario_id
+WHERE cf.usuario_id IS NULL OR u.id IS NULL;
+
+UPDATE rubros r
+LEFT JOIN usuarios u ON u.id = r.usuario_id
+SET r.usuario_id = @fallback_usuario_id
+WHERE r.usuario_id IS NULL OR u.id IS NULL;
+
+UPDATE presupuestos p
+LEFT JOIN usuarios u ON u.id = p.usuario_id
+SET p.usuario_id = @fallback_usuario_id
+WHERE p.usuario_id IS NULL OR u.id IS NULL;
+
+UPDATE partidas_planificadas pp
+LEFT JOIN usuarios u ON u.id = pp.usuario_id
+SET pp.usuario_id = @fallback_usuario_id
+WHERE pp.usuario_id IS NULL OR u.id IS NULL;
 
 ALTER TABLE cuentas_financieras MODIFY COLUMN usuario_id BIGINT NOT NULL;
 ALTER TABLE rubros MODIFY COLUMN usuario_id BIGINT NOT NULL;
