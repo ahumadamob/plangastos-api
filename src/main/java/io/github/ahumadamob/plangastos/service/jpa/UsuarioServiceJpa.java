@@ -26,6 +26,11 @@ public class UsuarioServiceJpa implements UsuarioService {
     }
 
     @Override
+    public Usuario getByEmail(String email) {
+        return usuarioRepository.findByEmail(email).orElse(null);
+    }
+
+    @Override
     public Usuario create(Usuario usuario) {
         return usuarioRepository.save(usuario);
     }

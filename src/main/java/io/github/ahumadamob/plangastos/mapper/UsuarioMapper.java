@@ -8,16 +8,17 @@ public class UsuarioMapper {
 
     public static Usuario requestToEntity(UsuarioRequestDto request) {
         Usuario usuario = new Usuario();
-        usuario.setNombre(request.getNombre());
         usuario.setEmail(request.getEmail());
+        usuario.setPasswordHash(request.getPasswordHash());
+        usuario.setActivo(request.getActivo() != null ? request.getActivo() : true);
         return usuario;
     }
 
     public static UsuarioResponseDto entityToResponse(Usuario usuario) {
         UsuarioResponseDto response = new UsuarioResponseDto();
         response.setId(usuario.getId());
-        response.setNombre(usuario.getNombre());
         response.setEmail(usuario.getEmail());
+        response.setActivo(usuario.getActivo());
         response.setCreatedAt(usuario.getCreatedAt());
         response.setUpdatedAt(usuario.getUpdatedAt());
         return response;
