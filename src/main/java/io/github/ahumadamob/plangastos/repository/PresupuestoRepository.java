@@ -15,4 +15,7 @@ public interface PresupuestoRepository extends JpaRepository<Presupuesto, Long> 
     List<Presupuesto> findByInactivoFalse();
 
     List<Presupuesto> findByInactivoFalseOrderByFechaDesdeDesc();
+
+    long countByUsuarioId(Long usuarioId);
 }
+

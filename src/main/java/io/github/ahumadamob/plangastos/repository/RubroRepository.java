@@ -7,4 +7,7 @@ import io.github.ahumadamob.plangastos.entity.Rubro;
 
 @Repository
 public interface RubroRepository extends JpaRepository<Rubro, Long> {
+
+    long countByUsuarioId(Long usuarioId);
 }
+
