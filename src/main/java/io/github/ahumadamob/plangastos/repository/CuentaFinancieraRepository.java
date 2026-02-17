@@ -3,6 +3,7 @@ package io.github.ahumadamob.plangastos.repository;
 import io.github.ahumadamob.plangastos.dto.CuentaFinancieraSaldoDto;
 import io.github.ahumadamob.plangastos.entity.CuentaFinanciera;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -43,6 +44,7 @@ public interface CuentaFinancieraRepository extends JpaRepository<CuentaFinancie
 
     List<CuentaFinanciera> findByUsuarioId(Long usuarioId);
 
+    Optional<CuentaFinanciera> findByIdAndUsuarioId(Long id, Long usuarioId);
+
     long countByUsuarioId(Long usuarioId);
 }
-

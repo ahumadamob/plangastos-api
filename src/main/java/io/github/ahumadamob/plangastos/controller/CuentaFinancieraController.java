@@ -54,8 +54,9 @@ public class CuentaFinancieraController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<CuentaFinancieraResponseDto>> getById(
-            @PathVariable Long id) {
-        CuentaFinancieraResponseDto data = mapper.entityToResponse(service.getById(id));
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        CuentaFinancieraResponseDto data = mapper.entityToResponse(service.getByIdAndUsuarioId(id, currentUser.id()));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Detalle de cuenta financiera"));
     }
 
@@ -69,15 +70,19 @@ public class CuentaFinancieraController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<CuentaFinancieraResponseDto>> update(
-            @PathVariable Long id, @RequestBody CuentaFinancieraRequestDto request) {
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser,
+            @RequestBody CuentaFinancieraRequestDto request) {
         CuentaFinancieraResponseDto data = mapper.entityToResponse(
-                service.update(id, mapper.requestToEntity(request)));
+                service.update(id, currentUser.id(), mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Cuenta financiera actualizada"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponseSuccessDto<Void>> delete(@PathVariable Long id) {
-        service.delete(id);
+    public ResponseEntity<ApiResponseSuccessDto<Void>> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        service.delete(id, currentUser.id());
         return ResponseEntity.ok(ApiResponseFactory.success(null, "Cuenta financiera eliminada"));
     }
 }

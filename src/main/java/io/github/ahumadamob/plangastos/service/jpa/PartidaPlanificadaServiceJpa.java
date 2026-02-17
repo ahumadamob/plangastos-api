@@ -33,8 +33,8 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
     }
 
     @Override
-    public PartidaPlanificada getById(Long id) {
-        return partidaPlanificadaRepository.findById(id).orElse(null);
+    public PartidaPlanificada getByIdAndUsuarioId(Long id, Long usuarioId) {
+        return getByIdOwnedByUsuario(id, usuarioId);
     }
 
     @Override
@@ -44,15 +44,17 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
     }
 
     @Override
-    public PartidaPlanificada update(Long id, PartidaPlanificada partidaPlanificada) {
+    public PartidaPlanificada update(Long id, Long usuarioId, PartidaPlanificada partidaPlanificada) {
+        getByIdOwnedByUsuario(id, usuarioId);
         partidaPlanificada.setId(id);
         validarJerarquiaSinCiclos(partidaPlanificada);
         return partidaPlanificadaRepository.save(partidaPlanificada);
     }
 
     @Override
-    public void delete(Long id) {
-        partidaPlanificadaRepository.deleteById(id);
+    public void delete(Long id, Long usuarioId) {
+        PartidaPlanificada partida = getByIdOwnedByUsuario(id, usuarioId);
+        partidaPlanificadaRepository.delete(partida);
     }
 
     @Override
@@ -74,10 +76,8 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
     }
 
     @Override
-    public PartidaPlanificada actualizarMontoComprometido(Long id, BigDecimal montoComprometido, BigDecimal porcentaje) {
-        PartidaPlanificada partida = partidaPlanificadaRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Partida planificada no encontrada con id " + id));
+    public PartidaPlanificada actualizarMontoComprometido(Long id, Long usuarioId, BigDecimal montoComprometido, BigDecimal porcentaje) {
+        PartidaPlanificada partida = getByIdOwnedByUsuario(id, usuarioId);
 
         validarActualizacionMonto(montoComprometido, porcentaje);
 
@@ -91,10 +91,8 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
     }
 
     @Override
-    public PartidaPlanificada consolidar(Long id) {
-        PartidaPlanificada partida = partidaPlanificadaRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Partida planificada no encontrada con id " + id));
+    public PartidaPlanificada consolidar(Long id, Long usuarioId) {
+        PartidaPlanificada partida = getByIdOwnedByUsuario(id, usuarioId);
 
         BigDecimal montoTotal = transaccionRepository.sumMontoByPartidaPlanificadaId(id);
         partida.setMontoComprometido(montoTotal);
@@ -121,6 +119,11 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
 
         partidaPlanificadaRepository.saveAll(partidasActualizadas);
         return partida;
+    }
+
+    private PartidaPlanificada getByIdOwnedByUsuario(Long id, Long usuarioId) {
+        return partidaPlanificadaRepository.findByIdAndUsuarioId(id, usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Partida planificada no encontrada con id " + id));
     }
 
     private void validarJerarquiaSinCiclos(PartidaPlanificada partidaPlanificada) {

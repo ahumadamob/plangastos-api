@@ -56,8 +56,10 @@ public class PresupuestoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponseSuccessDto<PresupuestoResponseDto>> getById(@PathVariable Long id) {
-        PresupuestoResponseDto data = mapper.entityToResponse(service.getById(id));
+    public ResponseEntity<ApiResponseSuccessDto<PresupuestoResponseDto>> getById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        PresupuestoResponseDto data = mapper.entityToResponse(service.getByIdAndUsuarioId(id, currentUser.id()));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Detalle de presupuesto"));
     }
 
@@ -71,15 +73,19 @@ public class PresupuestoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<PresupuestoResponseDto>> update(
-            @PathVariable Long id, @Valid @RequestBody PresupuestoRequestDto request) {
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser,
+            @Valid @RequestBody PresupuestoRequestDto request) {
         PresupuestoResponseDto data = mapper.entityToResponse(
-                service.update(id, mapper.requestToEntity(request)));
+                service.update(id, currentUser.id(), mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Presupuesto actualizado"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponseSuccessDto<Void>> delete(@PathVariable Long id) {
-        service.delete(id);
+    public ResponseEntity<ApiResponseSuccessDto<Void>> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        service.delete(id, currentUser.id());
         return ResponseEntity.ok(ApiResponseFactory.success(null, "Presupuesto eliminado"));
     }
 }

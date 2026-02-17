@@ -1,6 +1,7 @@
 package io.github.ahumadamob.plangastos.service.jpa;
 
 import io.github.ahumadamob.plangastos.entity.Rubro;
+import io.github.ahumadamob.plangastos.exception.ResourceNotFoundException;
 import io.github.ahumadamob.plangastos.repository.RubroRepository;
 import io.github.ahumadamob.plangastos.service.RubroService;
 import java.util.HashSet;
@@ -23,8 +24,8 @@ public class RubroServiceJpa implements RubroService {
     }
 
     @Override
-    public Rubro getById(Long id) {
-        return rubroRepository.findById(id).orElse(null);
+    public Rubro getByIdAndUsuarioId(Long id, Long usuarioId) {
+        return getByIdOwnedByUsuario(id, usuarioId);
     }
 
     @Override
@@ -34,15 +35,22 @@ public class RubroServiceJpa implements RubroService {
     }
 
     @Override
-    public Rubro update(Long id, Rubro rubro) {
+    public Rubro update(Long id, Long usuarioId, Rubro rubro) {
+        getByIdOwnedByUsuario(id, usuarioId);
         rubro.setId(id);
         validarJerarquiaSinCiclos(rubro);
         return rubroRepository.save(rubro);
     }
 
     @Override
-    public void delete(Long id) {
-        rubroRepository.deleteById(id);
+    public void delete(Long id, Long usuarioId) {
+        Rubro rubro = getByIdOwnedByUsuario(id, usuarioId);
+        rubroRepository.delete(rubro);
+    }
+
+    private Rubro getByIdOwnedByUsuario(Long id, Long usuarioId) {
+        return rubroRepository.findByIdAndUsuarioId(id, usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Rubro no encontrado con id " + id));
     }
 
     private void validarJerarquiaSinCiclos(Rubro rubro) {

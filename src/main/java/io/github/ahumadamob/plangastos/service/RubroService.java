@@ -7,11 +7,11 @@ public interface RubroService {
 
     List<Rubro> getAllByUsuarioId(Long usuarioId);
 
-    Rubro getById(Long id);
+    Rubro getByIdAndUsuarioId(Long id, Long usuarioId);
 
     Rubro create(Rubro rubro);
 
-    Rubro update(Long id, Rubro rubro);
+    Rubro update(Long id, Long usuarioId, Rubro rubro);
 
-    void delete(Long id);
+    void delete(Long id, Long usuarioId);
 }

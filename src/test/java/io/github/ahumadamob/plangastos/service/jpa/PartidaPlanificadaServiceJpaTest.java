@@ -55,12 +55,12 @@ class PartidaPlanificadaServiceJpaTest {
         copiaSinCuotaValida.setCuota(4);
         copiaSinCuotaValida.setCantidadCuotas(5);
 
-        when(partidaPlanificadaRepository.findById(10L)).thenReturn(Optional.of(original));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(10L, 1L)).thenReturn(Optional.of(original));
         when(transaccionRepository.sumMontoByPartidaPlanificadaId(10L)).thenReturn(BigDecimal.valueOf(2500));
         when(partidaPlanificadaRepository.findByPartidaOrigenIdAndFechaObjetivoGreaterThanEqual(10L, hoy))
                 .thenReturn(List.of(copiaFutura, copiaSinCuotaValida));
 
-        PartidaPlanificada consolidada = partidaPlanificadaServiceJpa.consolidar(10L);
+        PartidaPlanificada consolidada = partidaPlanificadaServiceJpa.consolidar(10L, 1L);
 
         assertThat(consolidada.getMontoComprometido()).isEqualByComparingTo("2500");
         assertThat(consolidada.getConsolidado()).isTrue();
@@ -95,11 +95,11 @@ class PartidaPlanificadaServiceJpaTest {
         partida.setId(20L);
         partida.setMontoComprometido(BigDecimal.valueOf(1000));
 
-        when(partidaPlanificadaRepository.findById(20L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(20L, 1L)).thenReturn(Optional.of(partida));
         when(partidaPlanificadaRepository.save(partida)).thenReturn(partida);
 
         PartidaPlanificada actualizada =
-                partidaPlanificadaServiceJpa.actualizarMontoComprometido(20L, BigDecimal.valueOf(750), null);
+                partidaPlanificadaServiceJpa.actualizarMontoComprometido(20L, 1L, BigDecimal.valueOf(750), null);
 
         assertThat(actualizada.getMontoComprometido()).isEqualByComparingTo("750");
         verify(partidaPlanificadaRepository).save(partida);
@@ -111,11 +111,11 @@ class PartidaPlanificadaServiceJpaTest {
         partida.setId(21L);
         partida.setMontoComprometido(BigDecimal.valueOf(1000));
 
-        when(partidaPlanificadaRepository.findById(21L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(21L, 1L)).thenReturn(Optional.of(partida));
         when(partidaPlanificadaRepository.save(partida)).thenReturn(partida);
 
         PartidaPlanificada actualizada =
-                partidaPlanificadaServiceJpa.actualizarMontoComprometido(21L, null, BigDecimal.valueOf(10));
+                partidaPlanificadaServiceJpa.actualizarMontoComprometido(21L, 1L, null, BigDecimal.valueOf(10));
 
         assertThat(actualizada.getMontoComprometido()).isEqualByComparingTo("1100");
     }
@@ -126,11 +126,11 @@ class PartidaPlanificadaServiceJpaTest {
         partida.setId(22L);
         partida.setMontoComprometido(BigDecimal.valueOf(1000));
 
-        when(partidaPlanificadaRepository.findById(22L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(22L, 1L)).thenReturn(Optional.of(partida));
         when(partidaPlanificadaRepository.save(partida)).thenReturn(partida);
 
         PartidaPlanificada actualizada =
-                partidaPlanificadaServiceJpa.actualizarMontoComprometido(22L, null, BigDecimal.valueOf(-100));
+                partidaPlanificadaServiceJpa.actualizarMontoComprometido(22L, 1L, null, BigDecimal.valueOf(-100));
 
         assertThat(actualizada.getMontoComprometido()).isEqualByComparingTo("0");
     }
@@ -141,9 +141,9 @@ class PartidaPlanificadaServiceJpaTest {
         partida.setId(23L);
         partida.setMontoComprometido(BigDecimal.valueOf(1000));
 
-        when(partidaPlanificadaRepository.findById(23L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(23L, 1L)).thenReturn(Optional.of(partida));
 
-        assertThatThrownBy(() -> partidaPlanificadaServiceJpa.actualizarMontoComprometido(23L, null, null))
+        assertThatThrownBy(() -> partidaPlanificadaServiceJpa.actualizarMontoComprometido(23L, 1L, null, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Debe enviar montoComprometido o porcentaje");
     }
@@ -154,10 +154,10 @@ class PartidaPlanificadaServiceJpaTest {
         partida.setId(24L);
         partida.setMontoComprometido(BigDecimal.valueOf(1000));
 
-        when(partidaPlanificadaRepository.findById(24L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(24L, 1L)).thenReturn(Optional.of(partida));
 
         assertThatThrownBy(() ->
-                        partidaPlanificadaServiceJpa.actualizarMontoComprometido(24L, null, BigDecimal.valueOf(-100.01)))
+                        partidaPlanificadaServiceJpa.actualizarMontoComprometido(24L, 1L, null, BigDecimal.valueOf(-100.01)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("porcentaje no puede ser menor a -100");
     }
@@ -168,10 +168,10 @@ class PartidaPlanificadaServiceJpaTest {
         partida.setId(25L);
         partida.setMontoComprometido(BigDecimal.valueOf(1000));
 
-        when(partidaPlanificadaRepository.findById(25L)).thenReturn(Optional.of(partida));
+        when(partidaPlanificadaRepository.findByIdAndUsuarioId(25L, 1L)).thenReturn(Optional.of(partida));
 
         assertThatThrownBy(() -> partidaPlanificadaServiceJpa.actualizarMontoComprometido(
-                        25L, BigDecimal.valueOf(800), BigDecimal.valueOf(10)))
+                        25L, 1L, BigDecimal.valueOf(800), BigDecimal.valueOf(10)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Solo debe enviar montoComprometido o porcentaje, no ambos");
     }

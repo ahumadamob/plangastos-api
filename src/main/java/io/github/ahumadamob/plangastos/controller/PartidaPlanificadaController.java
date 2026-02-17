@@ -79,8 +79,9 @@ public class PartidaPlanificadaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<PartidaPlanificadaResponseDto>> getById(
-            @PathVariable Long id) {
-        PartidaPlanificadaResponseDto data = mapper.entityToResponse(service.getById(id));
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        PartidaPlanificadaResponseDto data = mapper.entityToResponse(service.getByIdAndUsuarioId(id, currentUser.id()));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Detalle de partida planificada"));
     }
 
@@ -94,29 +95,37 @@ public class PartidaPlanificadaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<PartidaPlanificadaResponseDto>> update(
-            @PathVariable Long id, @RequestBody PartidaPlanificadaRequestDto request) {
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser,
+            @RequestBody PartidaPlanificadaRequestDto request) {
         PartidaPlanificadaResponseDto data = mapper.entityToResponse(
-                service.update(id, mapper.requestToEntity(request)));
+                service.update(id, currentUser.id(), mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Partida planificada actualizada"));
     }
 
     @PatchMapping("/{id}/monto-comprometido")
     public ResponseEntity<ApiResponseSuccessDto<PartidaPlanificadaResponseDto>> actualizarMontoComprometido(
-            @PathVariable Long id, @Valid @RequestBody PartidaPlanificadaMontoComprometidoRequestDto request) {
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser,
+            @Valid @RequestBody PartidaPlanificadaMontoComprometidoRequestDto request) {
         PartidaPlanificadaResponseDto data = mapper.entityToResponse(
-                service.actualizarMontoComprometido(id, request.getMontoComprometido(), request.getPorcentaje()));
+                service.actualizarMontoComprometido(id, currentUser.id(), request.getMontoComprometido(), request.getPorcentaje()));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Monto comprometido actualizado"));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ApiResponseSuccessDto<PartidaPlanificadaResponseDto>> consolidar(@PathVariable Long id) {
-        PartidaPlanificadaResponseDto data = mapper.entityToResponse(service.consolidar(id));
+    public ResponseEntity<ApiResponseSuccessDto<PartidaPlanificadaResponseDto>> consolidar(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        PartidaPlanificadaResponseDto data = mapper.entityToResponse(service.consolidar(id, currentUser.id()));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Partida planificada consolidada"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponseSuccessDto<Void>> delete(@PathVariable Long id) {
-        service.delete(id);
+    public ResponseEntity<ApiResponseSuccessDto<Void>> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        service.delete(id, currentUser.id());
         return ResponseEntity.ok(ApiResponseFactory.success(null, "Partida planificada eliminada"));
     }
 }
