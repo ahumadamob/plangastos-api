@@ -11,6 +11,21 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PartidaPlanificadaRepository extends JpaRepository<PartidaPlanificada, Long> {
 
+    /**
+     * Compatibilidad temporal para tests/IDE que todavía usan la firma anterior sin ownership.
+     * Evitar su uso en código nuevo.
+     */
+    @Deprecated
+    List<PartidaPlanificada> findByPresupuestoId(Long presupuestoId);
+
+    /**
+     * Compatibilidad temporal para tests/IDE que todavía usan la firma anterior sin ownership.
+     * Evitar su uso en código nuevo.
+     */
+    @Deprecated
+    List<PartidaPlanificada> findByPartidaOrigenIdAndFechaObjetivoGreaterThanEqual(
+            Long partidaOrigenId, LocalDate fechaObjetivo);
+
     List<PartidaPlanificada> findByUsuarioId(Long usuarioId);
 
     Optional<PartidaPlanificada> findByIdAndUsuarioId(Long id, Long usuarioId);
