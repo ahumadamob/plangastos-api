@@ -7,6 +7,7 @@ import io.github.ahumadamob.plangastos.dto.auth.AuthTokenResponseDto;
 import io.github.ahumadamob.plangastos.dto.common.ApiResponseSuccessDto;
 import io.github.ahumadamob.plangastos.util.ApiResponseFactory;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,8 +29,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponseSuccessDto<AuthTokenResponseDto>> login(@Valid @RequestBody AuthLoginRequestDto request) {
-        return ResponseEntity.ok(ApiResponseFactory.success(authService.login(request), "Login exitoso"));
+    public ResponseEntity<ApiResponseSuccessDto<AuthTokenResponseDto>> login(
+            @Valid @RequestBody AuthLoginRequestDto request,
+            HttpServletRequest httpRequest) {
+        return ResponseEntity.ok(ApiResponseFactory.success(authService.login(request, httpRequest), "Login exitoso"));
     }
 
     @PostMapping("/register")
