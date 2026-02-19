@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 import javax.crypto.SecretKey;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class JwtTokenService {
 
     public JwtTokenService(AuthProperties authProperties) {
         this.authProperties = authProperties;
+        validateExpirationPolicy();
     }
 
     public JwtTokenResult createAccessToken(Usuario usuario) {
@@ -50,14 +52,54 @@ public class JwtTokenService {
     }
 
     private Jws<Claims> parseSignedClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token);
+        JwtException lastException = null;
+        for (SecretKey validationKey : getValidationKeys()) {
+            try {
+                return Jwts.parser()
+                        .verifyWith(validationKey)
+                        .build()
+                        .parseSignedClaims(token);
+            } catch (JwtException ex) {
+                lastException = ex;
+            }
+        }
+
+        if (lastException != null) {
+            throw lastException;
+        }
+        throw new JwtException("No hay llaves de validación configuradas");
     }
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(authProperties.getJwt().getSecret().getBytes(StandardCharsets.UTF_8));
+        return buildSecretKey(authProperties.getJwt().getSecret());
+    }
+
+    private List<SecretKey> getValidationKeys() {
+        List<String> validationSecrets = authProperties.getJwt().getValidationSecrets();
+        if (validationSecrets == null || validationSecrets.isEmpty()) {
+            return List.of(getSigningKey());
+        }
+
+        return validationSecrets.stream()
+                .filter(secret -> secret != null && !secret.isBlank())
+                .map(this::buildSecretKey)
+                .toList();
+    }
+
+    private SecretKey buildSecretKey(String secret) {
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private void validateExpirationPolicy() {
+        long expiration = authProperties.getJwt().getExpirationSeconds();
+        long minExpiration = authProperties.getJwt().getMinExpirationSeconds();
+        long maxExpiration = authProperties.getJwt().getMaxExpirationSeconds();
+
+        if (expiration < minExpiration || expiration > maxExpiration) {
+            throw new IllegalStateException(
+                    "plangastos.auth.jwt.expiration-seconds fuera de la política permitida ["
+                    + minExpiration + ", " + maxExpiration + "]");
+        }
     }
 
     public record JwtTokenResult(String token, Instant expiresAt) {

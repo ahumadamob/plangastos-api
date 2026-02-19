@@ -77,7 +77,7 @@ class AuthAndOwnershipIntegrationTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.token").isNotEmpty())
+                .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
                 .andExpect(jsonPath("$.data.tokenType").value("Bearer"))
                 .andExpect(jsonPath("$.data.expiresAt").isNotEmpty());
     }
@@ -96,6 +96,36 @@ class AuthAndOwnershipIntegrationTest {
                                 """))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.errorCode").value("UNAUTHORIZED"));
+    }
+
+
+    @Test
+    void login_MultiplesFallos_DebeAplicarRateLimit() throws Exception {
+        crearUsuario("bloqueo@test.com", "Password123");
+
+        for (int i = 0; i < 3; i++) {
+            mockMvc.perform(post("/auth/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("""
+                                    {
+                                      "email": "bloqueo@test.com",
+                                      "password": "bad-pass"
+                                    }
+                                    """))
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.errorCode").value("UNAUTHORIZED"));
+        }
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "bloqueo@test.com",
+                                  "password": "Password123"
+                                }
+                                """))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.messages[0].message").value("Demasiados intentos fallidos. Intenta más tarde"));
     }
 
     @Test
@@ -188,7 +218,7 @@ class AuthAndOwnershipIntegrationTest {
                 .andReturn();
 
         JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
-        return root.path("data").path("token").asText();
+        return root.path("data").path("accessToken").asText();
     }
 
     private String crearTokenVencido(Long usuarioId) {

@@ -165,3 +165,46 @@ curl -X GET 'http://localhost:8080/api/v1/presupuesto' \
 curl -X GET 'http://localhost:8080/api/v1/rubro' \
   -H 'Authorization: Bearer <accessToken>'
 ```
+
+
+## Endurecimiento de autenticación
+
+### Rotación de secretos JWT por entorno
+
+La API soporta llave activa + llave previa para rotación sin corte:
+
+- `PLANGASTOS_AUTH_JWT_SECRET`: llave activa para firmar.
+- `PLANGASTOS_AUTH_JWT_PREVIOUS_SECRET`: llave anterior usada solo para validar tokens durante transición.
+- `plangastos.auth.jwt.validation-secrets[]`: lista interna de llaves de validación (activa + previa).
+
+Recomendación: rotar por entorno (dev/staging/prod) con llaves distintas y ciclo periódico (ej. cada 60-90 días).
+
+### Política de expiración de tokens
+
+- `PLANGASTOS_AUTH_JWT_EXPIRATION_SECONDS` define TTL del access token.
+- `PLANGASTOS_AUTH_JWT_MIN_EXPIRATION_SECONDS` / `PLANGASTOS_AUTH_JWT_MAX_EXPIRATION_SECONDS` definen límites permitidos.
+- Si el TTL configurado queda fuera del rango, la app falla al iniciar para evitar configuración insegura.
+
+### Logging de eventos de auth
+
+Se registran eventos estructurados para login exitoso/fallido mediante `AuthEventLogger`:
+
+- `auth_event=LOGIN_SUCCESS`
+- `auth_event=LOGIN_FAILURE`
+
+Los logs no exponen credenciales ni tokens: solo hash truncado del principal, IP y user-agent saneado.
+
+### Rate limiting de login
+
+Configuración disponible:
+
+- `PLANGASTOS_AUTH_LOGIN_RATE_LIMIT_ENABLED`
+- `PLANGASTOS_AUTH_LOGIN_RATE_LIMIT_MAX_ATTEMPTS`
+- `PLANGASTOS_AUTH_LOGIN_RATE_LIMIT_WINDOW_SECONDS`
+- `PLANGASTOS_AUTH_LOGIN_RATE_LIMIT_BLOCK_SECONDS`
+
+Cuando se supera el umbral, el login se bloquea temporalmente para mitigar fuerza bruta.
+
+## Checklist de despliegue seguro y rollback
+
+Ver `docs/security-deployment-checklist.md`.
