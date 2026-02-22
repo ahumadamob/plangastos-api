@@ -3,8 +3,10 @@ package io.github.ahumadamob.plangastos.repository;
 import io.github.ahumadamob.plangastos.dto.CuentaFinancieraSaldoDto;
 import io.github.ahumadamob.plangastos.entity.CuentaFinanciera;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -33,9 +35,16 @@ public interface CuentaFinancieraRepository extends JpaRepository<CuentaFinancie
             left join t.partidaPlanificada pp
             left join pp.rubro r
             left join pp.presupuesto p
-            where p.id is null or p.inactivo is null or p.inactivo = false
+            where c.usuario.id = :usuarioId
+              and (p.id is null or p.inactivo is null or p.inactivo = false)
             group by c.id, c.nombre, d.codigo, c.saldoInicial
             order by c.id
             """)
-    List<CuentaFinancieraSaldoDto> findAllSaldos();
+    List<CuentaFinancieraSaldoDto> findAllSaldosByUsuarioId(@Param("usuarioId") Long usuarioId);
+
+    List<CuentaFinanciera> findByUsuarioId(Long usuarioId);
+
+    Optional<CuentaFinanciera> findByIdAndUsuarioId(Long id, Long usuarioId);
+
+    long countByUsuarioId(Long usuarioId);
 }

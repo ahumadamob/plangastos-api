@@ -9,6 +9,8 @@ public interface UsuarioService {
 
     Usuario getById(Long id);
 
+    Usuario getByEmail(String email);
+
     Usuario create(Usuario usuario);
 
     Usuario update(Long id, Usuario usuario);

@@ -1,5 +1,6 @@
 package io.github.ahumadamob.plangastos.controller;
 
+import io.github.ahumadamob.plangastos.auth.CurrentUser;
 import io.github.ahumadamob.plangastos.dto.PresupuestoRequestDto;
 import io.github.ahumadamob.plangastos.dto.PresupuestoDropdownDto;
 import io.github.ahumadamob.plangastos.dto.PresupuestoResponseDto;
@@ -8,8 +9,10 @@ import io.github.ahumadamob.plangastos.mapper.PresupuestoMapper;
 import io.github.ahumadamob.plangastos.service.PresupuestoService;
 import io.github.ahumadamob.plangastos.util.ApiResponseFactory;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,30 +38,34 @@ public class PresupuestoController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseSuccessDto<List<PresupuestoResponseDto>>> getAll() {
-        List<PresupuestoResponseDto> data = service.getAll().stream()
+    public ResponseEntity<ApiResponseSuccessDto<List<PresupuestoResponseDto>>> getAll(
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        List<PresupuestoResponseDto> data = service.getAllByUsuarioId(currentUser.id()).stream()
                 .map(mapper::entityToResponse)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de presupuestos"));
     }
 
     @GetMapping("/dropdown")
-    public ResponseEntity<ApiResponseSuccessDto<List<PresupuestoDropdownDto>>> getDropdown() {
-        List<PresupuestoDropdownDto> data = service.getAllOrderByFechaDesdeDesc().stream()
+    public ResponseEntity<ApiResponseSuccessDto<List<PresupuestoDropdownDto>>> getDropdown(
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        List<PresupuestoDropdownDto> data = service.getAllByUsuarioIdOrderByFechaDesdeDesc(currentUser.id()).stream()
                 .map(mapper::entityToDropdownDto)
                 .toList();
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Listado de presupuestos para dropdown"));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponseSuccessDto<PresupuestoResponseDto>> getById(@PathVariable Long id) {
-        PresupuestoResponseDto data = mapper.entityToResponse(service.getById(id));
+    public ResponseEntity<ApiResponseSuccessDto<PresupuestoResponseDto>> getById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        PresupuestoResponseDto data = mapper.entityToResponse(service.getByIdAndUsuarioId(id, currentUser.id()));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Detalle de presupuesto"));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponseSuccessDto<PresupuestoResponseDto>> create(
-            @RequestBody PresupuestoRequestDto request) {
+            @Valid @RequestBody PresupuestoRequestDto request) {
         PresupuestoResponseDto data = mapper.entityToResponse(
                 service.create(mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Presupuesto creado"));
@@ -66,15 +73,19 @@ public class PresupuestoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<PresupuestoResponseDto>> update(
-            @PathVariable Long id, @RequestBody PresupuestoRequestDto request) {
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser,
+            @Valid @RequestBody PresupuestoRequestDto request) {
         PresupuestoResponseDto data = mapper.entityToResponse(
-                service.update(id, mapper.requestToEntity(request)));
+                service.update(id, currentUser.id(), mapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Presupuesto actualizado"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponseSuccessDto<Void>> delete(@PathVariable Long id) {
-        service.delete(id);
+    public ResponseEntity<ApiResponseSuccessDto<Void>> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CurrentUser currentUser) {
+        service.delete(id, currentUser.id());
         return ResponseEntity.ok(ApiResponseFactory.success(null, "Presupuesto eliminado"));
     }
 }

@@ -6,23 +6,23 @@ import java.util.List;
 
 public interface PartidaPlanificadaService {
 
-    List<PartidaPlanificada> getAll();
+    List<PartidaPlanificada> getAllByUsuarioId(Long usuarioId);
 
-    PartidaPlanificada getById(Long id);
+    PartidaPlanificada getByIdAndUsuarioId(Long id, Long usuarioId);
 
     PartidaPlanificada create(PartidaPlanificada partidaPlanificada);
 
-    PartidaPlanificada update(Long id, PartidaPlanificada partidaPlanificada);
+    PartidaPlanificada update(Long id, Long usuarioId, PartidaPlanificada partidaPlanificada);
 
-    void delete(Long id);
+    void delete(Long id, Long usuarioId);
 
-    List<PartidaPlanificada> getIngresosByPresupuestoId(Long presupuestoId);
+    List<PartidaPlanificada> getIngresosByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId);
 
-    List<PartidaPlanificada> getGastosByPresupuestoId(Long presupuestoId);
+    List<PartidaPlanificada> getGastosByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId);
 
-    List<PartidaPlanificada> getAhorroByPresupuestoId(Long presupuestoId);
+    List<PartidaPlanificada> getAhorroByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId);
 
-    PartidaPlanificada consolidar(Long id);
+    PartidaPlanificada consolidar(Long id, Long usuarioId);
 
-    PartidaPlanificada actualizarMontoComprometido(Long id, BigDecimal montoComprometido, BigDecimal porcentaje);
+    PartidaPlanificada actualizarMontoComprometido(Long id, Long usuarioId, BigDecimal montoComprometido, BigDecimal porcentaje);
 }

@@ -10,7 +10,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,54 +28,56 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
     }
 
     @Override
-    public List<PartidaPlanificada> getAll() {
-        return partidaPlanificadaRepository.findAll();
+    public List<PartidaPlanificada> getAllByUsuarioId(Long usuarioId) {
+        return partidaPlanificadaRepository.findByUsuarioId(usuarioId);
     }
 
     @Override
-    public PartidaPlanificada getById(Long id) {
-        return partidaPlanificadaRepository.findById(id).orElse(null);
+    public PartidaPlanificada getByIdAndUsuarioId(Long id, Long usuarioId) {
+        return getByIdOwnedByUsuario(id, usuarioId);
     }
 
     @Override
     public PartidaPlanificada create(PartidaPlanificada partidaPlanificada) {
+        validarJerarquiaSinCiclos(partidaPlanificada);
         return partidaPlanificadaRepository.save(partidaPlanificada);
     }
 
     @Override
-    public PartidaPlanificada update(Long id, PartidaPlanificada partidaPlanificada) {
+    public PartidaPlanificada update(Long id, Long usuarioId, PartidaPlanificada partidaPlanificada) {
+        getByIdOwnedByUsuario(id, usuarioId);
         partidaPlanificada.setId(id);
+        validarJerarquiaSinCiclos(partidaPlanificada);
         return partidaPlanificadaRepository.save(partidaPlanificada);
     }
 
     @Override
-    public void delete(Long id) {
-        partidaPlanificadaRepository.deleteById(id);
+    public void delete(Long id, Long usuarioId) {
+        PartidaPlanificada partida = getByIdOwnedByUsuario(id, usuarioId);
+        partidaPlanificadaRepository.delete(partida);
     }
 
     @Override
-    public List<PartidaPlanificada> getIngresosByPresupuestoId(Long presupuestoId) {
-        return partidaPlanificadaRepository.findByPresupuestoIdAndRubroNaturaleza(
-                presupuestoId, NaturalezaMovimiento.INGRESO);
+    public List<PartidaPlanificada> getIngresosByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId) {
+        return partidaPlanificadaRepository.findByPresupuestoIdAndUsuarioIdAndRubroNaturaleza(
+                presupuestoId, usuarioId, NaturalezaMovimiento.INGRESO);
     }
 
     @Override
-    public List<PartidaPlanificada> getGastosByPresupuestoId(Long presupuestoId) {
-        return partidaPlanificadaRepository.findByPresupuestoIdAndRubroNaturaleza(
-                presupuestoId, NaturalezaMovimiento.GASTO);
+    public List<PartidaPlanificada> getGastosByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId) {
+        return partidaPlanificadaRepository.findByPresupuestoIdAndUsuarioIdAndRubroNaturaleza(
+                presupuestoId, usuarioId, NaturalezaMovimiento.GASTO);
     }
 
     @Override
-    public List<PartidaPlanificada> getAhorroByPresupuestoId(Long presupuestoId) {
-        return partidaPlanificadaRepository.findByPresupuestoIdAndRubroNaturaleza(
-                presupuestoId, NaturalezaMovimiento.RESERVA_AHORRO);
+    public List<PartidaPlanificada> getAhorroByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId) {
+        return partidaPlanificadaRepository.findByPresupuestoIdAndUsuarioIdAndRubroNaturaleza(
+                presupuestoId, usuarioId, NaturalezaMovimiento.RESERVA_AHORRO);
     }
 
     @Override
-    public PartidaPlanificada actualizarMontoComprometido(Long id, BigDecimal montoComprometido, BigDecimal porcentaje) {
-        PartidaPlanificada partida = partidaPlanificadaRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Partida planificada no encontrada con id " + id));
+    public PartidaPlanificada actualizarMontoComprometido(Long id, Long usuarioId, BigDecimal montoComprometido, BigDecimal porcentaje) {
+        PartidaPlanificada partida = getByIdOwnedByUsuario(id, usuarioId);
 
         validarActualizacionMonto(montoComprometido, porcentaje);
 
@@ -87,14 +91,12 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
     }
 
     @Override
-    public PartidaPlanificada consolidar(Long id) {
-        PartidaPlanificada partida = partidaPlanificadaRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Partida planificada no encontrada con id " + id));
+    public PartidaPlanificada consolidar(Long id, Long usuarioId) {
+        PartidaPlanificada partida = getByIdOwnedByUsuario(id, usuarioId);
 
         BigDecimal montoTotal = transaccionRepository.sumMontoByPartidaPlanificadaId(id);
         partida.setMontoComprometido(montoTotal);
-        partida.setConsolidado(Boolean.TRUE);
+        partida.setConsolidado(true);
 
         Long partidaOrigenId = partida.getPartidaOrigen() != null ? partida.getPartidaOrigen().getId() : partida.getId();
         List<PartidaPlanificada> partidasRelacionadas =
@@ -117,6 +119,31 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
 
         partidaPlanificadaRepository.saveAll(partidasActualizadas);
         return partida;
+    }
+
+    private PartidaPlanificada getByIdOwnedByUsuario(Long id, Long usuarioId) {
+        return partidaPlanificadaRepository.findByIdAndUsuarioId(id, usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Partida planificada no encontrada con id " + id));
+    }
+
+    private void validarJerarquiaSinCiclos(PartidaPlanificada partidaPlanificada) {
+        Set<Long> visitados = new HashSet<>();
+        if (partidaPlanificada.getId() != null) {
+            visitados.add(partidaPlanificada.getId());
+        }
+
+        PartidaPlanificada actual = partidaPlanificada.getPartidaOrigen();
+        while (actual != null) {
+            Long actualId = actual.getId();
+            if (actualId != null && !visitados.add(actualId)) {
+                throw new IllegalArgumentException("Se detectó un ciclo en partidaOrigen");
+            }
+            actual = actualId != null
+                    ? partidaPlanificadaRepository.findById(actualId).orElse(actual.getPartidaOrigen())
+                    : actual.getPartidaOrigen();
+        }
+
+        partidaPlanificada.validarJerarquiaSinCiclos();
     }
 
     private void validarActualizacionMonto(BigDecimal montoComprometido, BigDecimal porcentaje) {

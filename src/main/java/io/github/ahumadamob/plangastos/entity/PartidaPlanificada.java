@@ -3,7 +3,9 @@ package io.github.ahumadamob.plangastos.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,12 +23,18 @@ import jakarta.validation.constraints.Positive;
 public class PartidaPlanificada extends RegistroPresupuesto {
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    @NotNull
     @Column(nullable = false, precision = 18, scale = 2)
     private BigDecimal montoComprometido;
 
     private LocalDate fechaObjetivo;
 
-    private Boolean consolidado = Boolean.FALSE;
+    @Column(nullable = false)
+    private boolean consolidado = false;
 
     @Positive
     // Se mapea a la columna "cuota" para mantener la nomenclatura en BD.
@@ -51,6 +59,14 @@ public class PartidaPlanificada extends RegistroPresupuesto {
         return cuota <= cantidadCuotas;
     }
 
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
     public BigDecimal getMontoComprometido() {
         return montoComprometido;
     }
@@ -67,11 +83,11 @@ public class PartidaPlanificada extends RegistroPresupuesto {
         this.fechaObjetivo = fechaObjetivo;
     }
 
-    public Boolean getConsolidado() {
+    public boolean getConsolidado() {
         return consolidado;
     }
 
-    public void setConsolidado(Boolean consolidado) {
+    public void setConsolidado(boolean consolidado) {
         this.consolidado = consolidado;
     }
 
@@ -105,5 +121,21 @@ public class PartidaPlanificada extends RegistroPresupuesto {
 
     public void setTransacciones(List<Transaccion> transacciones) {
         this.transacciones = transacciones;
+    }
+
+    public void validarJerarquiaSinCiclos() {
+        Set<Long> visitados = new HashSet<>();
+        if (getId() != null) {
+            visitados.add(getId());
+        }
+
+        PartidaPlanificada actual = partidaOrigen;
+        while (actual != null) {
+            Long actualId = actual.getId();
+            if (actualId != null && !visitados.add(actualId)) {
+                throw new IllegalArgumentException("La jerarquía de partida planificada contiene una autoreferencia o ciclo");
+            }
+            actual = actual.getPartidaOrigen();
+        }
     }
 }

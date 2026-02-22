@@ -18,10 +18,11 @@ public class PresupuestoMapper {
 
     public Presupuesto requestToEntity(PresupuestoRequestDto request) {
         Presupuesto presupuesto = new Presupuesto();
+        presupuesto.setUsuario(mapperHelper.getUsuario(request.getUsuario_id()));
         presupuesto.setNombre(request.getNombre());
         presupuesto.setFechaDesde(request.getFechaDesde());
         presupuesto.setFechaHasta(request.getFechaHasta());
-        presupuesto.setInactivo(request.getInactivo());
+        presupuesto.setInactivo(Boolean.TRUE.equals(request.getInactivo()));
         presupuesto.setPresupuestoOrigen(mapperHelper.getPresupuesto(request.getPresupuestoOrigen_id()));
         return presupuesto;
     }

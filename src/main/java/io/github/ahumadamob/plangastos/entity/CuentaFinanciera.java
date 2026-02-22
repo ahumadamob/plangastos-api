@@ -17,8 +17,9 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = "cuentas_financieras")
 public class CuentaFinanciera extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "usuario_id", nullable = true)
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     @NotNull
@@ -41,7 +42,7 @@ public class CuentaFinanciera extends BaseEntity {
 
     @NotNull
     @Column(nullable = false)
-    private Boolean activo;
+    private boolean activo = false;
 
     public Usuario getUsuario() {
         return usuario;
@@ -83,11 +84,11 @@ public class CuentaFinanciera extends BaseEntity {
         this.saldoInicial = saldoInicial;
     }
 
-    public Boolean getActivo() {
+    public boolean getActivo() {
         return activo;
     }
 
-    public void setActivo(Boolean activo) {
+    public void setActivo(boolean activo) {
         this.activo = activo;
     }
 }

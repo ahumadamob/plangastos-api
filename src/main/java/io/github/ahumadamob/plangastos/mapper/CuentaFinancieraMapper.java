@@ -23,7 +23,7 @@ public class CuentaFinancieraMapper {
         cuentaFinanciera.setNombre(request.getNombre());
         cuentaFinanciera.setTipo(request.getTipo());
         cuentaFinanciera.setSaldoInicial(request.getSaldoInicial());
-        cuentaFinanciera.setActivo(request.getActivo());
+        cuentaFinanciera.setActivo(Boolean.TRUE.equals(request.getActivo()));
         return cuentaFinanciera;
     }
 
