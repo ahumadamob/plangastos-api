@@ -49,6 +49,8 @@ Request (`application/json`):
 }
 ```
 
+> Nota temporal: también se acepta `"password": ""` y se considera login válido para usuarios existentes y activos.
+
 Response exitosa (`200 OK`):
 
 ```json
@@ -70,6 +72,7 @@ Request (`application/json`):
 
 ```json
 {
+  "nombre": "Nuevo Usuario",
   "email": "nuevo.usuario@plangastos.local",
   "password": "Password123!"
 }

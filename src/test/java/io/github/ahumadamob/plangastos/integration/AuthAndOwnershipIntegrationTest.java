@@ -82,6 +82,24 @@ class AuthAndOwnershipIntegrationTest {
                 .andExpect(jsonPath("$.data.expiresAt").isNotEmpty());
     }
 
+
+    @Test
+    void login_PasswordEnBlanco_DebeRetornarToken() throws Exception {
+        crearUsuario("blank@test.com", "Password123");
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "blank@test.com",
+                                  "password": ""
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.accessToken").isNotEmpty());
+    }
+
     @Test
     void login_CredencialesInvalidas_DebeRetornarUnauthorized() throws Exception {
         crearUsuario("invalido@test.com", "Password123");
@@ -189,6 +207,7 @@ class AuthAndOwnershipIntegrationTest {
 
     private Usuario crearUsuario(String email, String plainPassword) {
         Usuario usuario = new Usuario();
+        usuario.setNombre("Usuario Test");
         usuario.setEmail(email);
         usuario.setPasswordHash(passwordEncoder.encode(plainPassword));
         usuario.setActivo(true);

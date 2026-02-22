@@ -8,6 +8,10 @@ import jakarta.validation.constraints.Size;
 public class UsuarioRequestDto {
 
     @NotBlank
+    @Size(max = 255)
+    private String nombre;
+
+    @NotBlank
     @Email
     @Size(max = 255)
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
@@ -18,6 +22,14 @@ public class UsuarioRequestDto {
     private String passwordHash;
 
     private Boolean activo;
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
     public String getEmail() {
         return email;

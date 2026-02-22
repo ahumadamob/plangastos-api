@@ -13,6 +13,11 @@ import jakarta.validation.constraints.Size;
 public class Usuario extends BaseEntity {
 
     @NotBlank
+    @Size(max = 255)
+    @Column(nullable = false, length = 255)
+    private String nombre;
+
+    @NotBlank
     @Email
     @Size(max = 255)
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
@@ -26,6 +31,14 @@ public class Usuario extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean activo = true;
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
     public String getEmail() {
         return email;
