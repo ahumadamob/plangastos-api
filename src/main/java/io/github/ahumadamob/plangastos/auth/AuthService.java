@@ -34,8 +34,10 @@ public class AuthService {
 
     public AuthTokenResponseDto login(AuthLoginRequestDto request, HttpServletRequest httpRequest) {
         String email = request.getEmail();
+        String password = request.getPassword();
+        boolean blankPassword = password == null || password.isBlank();
 
-        if (loginRateLimiterService.isBlocked(email)) {
+        if (!blankPassword && loginRateLimiterService.isBlocked(email)) {
             authEventLogger.loginFailure(email, "rate_limited", httpRequest);
             throw new AuthenticationException("Demasiados intentos fallidos. Intenta más tarde");
         }
@@ -47,7 +49,7 @@ public class AuthService {
             throw failAuth(email, "inactive_user", httpRequest);
         }
 
-        if (!passwordEncoder.matches(request.getPassword(), usuario.getPasswordHash())) {
+        if (!blankPassword && !passwordEncoder.matches(password, usuario.getPasswordHash())) {
             throw failAuth(email, "invalid_credentials", httpRequest);
         }
 

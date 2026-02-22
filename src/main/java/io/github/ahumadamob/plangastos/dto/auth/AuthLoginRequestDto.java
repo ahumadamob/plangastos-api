@@ -13,8 +13,7 @@ public class AuthLoginRequestDto {
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
     private String email;
 
-    @NotBlank
-    @Size(min = 8, max = 72)
+    @Size(max = 72)
     private String password;
 
     public String getEmail() {
