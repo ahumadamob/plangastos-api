@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class UsuarioResponseDto {
 
     private Long id;
+    private String nombre;
     private String email;
     private Boolean activo;
     private LocalDateTime createdAt;
@@ -16,6 +17,14 @@ public class UsuarioResponseDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getEmail() {

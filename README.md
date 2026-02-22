@@ -70,6 +70,7 @@ Request (`application/json`):
 
 ```json
 {
+  "nombre": "Nuevo Usuario",
   "email": "nuevo.usuario@plangastos.local",
   "password": "Password123!"
 }

@@ -189,6 +189,7 @@ class AuthAndOwnershipIntegrationTest {
 
     private Usuario crearUsuario(String email, String plainPassword) {
         Usuario usuario = new Usuario();
+        usuario.setNombre("Usuario Test");
         usuario.setEmail(email);
         usuario.setPasswordHash(passwordEncoder.encode(plainPassword));
         usuario.setActivo(true);
