@@ -125,6 +125,28 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.METHOD_NOT_ALLOWED, errors, request);
     }
 
+
+    @ExceptionHandler(BusinessValidationException.class)
+    public ResponseEntity<ErrorResponseDto> handleBusinessValidation(BusinessValidationException ex,
+            HttpServletRequest request) {
+        List<ErrorDetailDto> errors = List.of(new ErrorDetailDto("business", ex.getMessage()));
+        return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, errors, request);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponseDto> handleAuthentication(AuthenticationException ex,
+            HttpServletRequest request) {
+        List<ErrorDetailDto> errors = List.of(new ErrorDetailDto("auth", ex.getMessage()));
+        return buildResponse(HttpStatus.UNAUTHORIZED, errors, request);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseDto> handleIllegalArgument(IllegalArgumentException ex,
+            HttpServletRequest request) {
+        List<ErrorDetailDto> errors = List.of(new ErrorDetailDto("request", ex.getMessage()));
+        return buildResponse(HttpStatus.BAD_REQUEST, errors, request);
+    }
+
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<ErrorResponseDto> handleSqlIntegrity(SQLIntegrityConstraintViolationException ex,
             HttpServletRequest request) {
@@ -187,4 +209,3 @@ public class GlobalExceptionHandler {
         return "constraint";
     }
 }
-

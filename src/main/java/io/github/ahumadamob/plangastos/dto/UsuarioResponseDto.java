@@ -7,6 +7,7 @@ public class UsuarioResponseDto {
     private Long id;
     private String nombre;
     private String email;
+    private Boolean activo;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -32,6 +33,14 @@ public class UsuarioResponseDto {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 
     public LocalDateTime getCreatedAt() {

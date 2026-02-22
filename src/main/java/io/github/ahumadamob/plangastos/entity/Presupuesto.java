@@ -1,6 +1,8 @@
 package io.github.ahumadamob.plangastos.entity;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,26 +10,41 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "presupuestos")
 public class Presupuesto extends BaseEntity {
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
     @NotBlank
     @Column(nullable = false)
     private String nombre;
-
-    @Column(unique = true)
-    private String codigo;
 
     private LocalDate fechaDesde;
 
     private LocalDate fechaHasta;
 
+    @Column(nullable = false)
+    private boolean inactivo = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "presupuesto_origen_id")
     private Presupuesto presupuestoOrigen;
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 
     public String getNombre() {
         return nombre;
@@ -35,14 +52,6 @@ public class Presupuesto extends BaseEntity {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
     }
 
     public LocalDate getFechaDesde() {
@@ -61,11 +70,43 @@ public class Presupuesto extends BaseEntity {
         this.fechaHasta = fechaHasta;
     }
 
+    public boolean getInactivo() {
+        return inactivo;
+    }
+
+    public void setInactivo(boolean inactivo) {
+        this.inactivo = inactivo;
+    }
+
     public Presupuesto getPresupuestoOrigen() {
         return presupuestoOrigen;
     }
 
     public void setPresupuestoOrigen(Presupuesto presupuestoOrigen) {
         this.presupuestoOrigen = presupuestoOrigen;
+    }
+
+    public void validarJerarquiaSinCiclos() {
+        Set<Long> visitados = new HashSet<>();
+        if (getId() != null) {
+            visitados.add(getId());
+        }
+
+        Presupuesto actual = presupuestoOrigen;
+        while (actual != null) {
+            Long actualId = actual.getId();
+            if (actualId != null && !visitados.add(actualId)) {
+                throw new IllegalArgumentException("La jerarquía de presupuesto contiene una autoreferencia o ciclo");
+            }
+            actual = actual.getPresupuestoOrigen();
+        }
+    }
+
+    @AssertTrue(message = "fechaDesde debe ser anterior o igual a fechaHasta")
+    public boolean isRangoFechasValido() {
+        if (fechaDesde == null || fechaHasta == null) {
+            return true;
+        }
+        return !fechaDesde.isAfter(fechaHasta);
     }
 }

@@ -7,7 +7,12 @@ import io.github.ahumadamob.plangastos.repository.PartidaPlanificadaRepository;
 import io.github.ahumadamob.plangastos.repository.TransaccionRepository;
 import io.github.ahumadamob.plangastos.service.PartidaPlanificadaService;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,59 +28,160 @@ public class PartidaPlanificadaServiceJpa implements PartidaPlanificadaService {
     }
 
     @Override
-    public List<PartidaPlanificada> getAll() {
-        return partidaPlanificadaRepository.findAll();
+    public List<PartidaPlanificada> getAllByUsuarioId(Long usuarioId) {
+        return partidaPlanificadaRepository.findByUsuarioId(usuarioId);
     }
 
     @Override
-    public PartidaPlanificada getById(Long id) {
-        return partidaPlanificadaRepository.findById(id).orElse(null);
+    public PartidaPlanificada getByIdAndUsuarioId(Long id, Long usuarioId) {
+        return getByIdOwnedByUsuario(id, usuarioId);
     }
 
     @Override
     public PartidaPlanificada create(PartidaPlanificada partidaPlanificada) {
+        validarJerarquiaSinCiclos(partidaPlanificada);
         return partidaPlanificadaRepository.save(partidaPlanificada);
     }
 
     @Override
-    public PartidaPlanificada update(Long id, PartidaPlanificada partidaPlanificada) {
+    public PartidaPlanificada update(Long id, Long usuarioId, PartidaPlanificada partidaPlanificada) {
+        getByIdOwnedByUsuario(id, usuarioId);
         partidaPlanificada.setId(id);
+        validarJerarquiaSinCiclos(partidaPlanificada);
         return partidaPlanificadaRepository.save(partidaPlanificada);
     }
 
     @Override
-    public void delete(Long id) {
-        partidaPlanificadaRepository.deleteById(id);
+    public void delete(Long id, Long usuarioId) {
+        PartidaPlanificada partida = getByIdOwnedByUsuario(id, usuarioId);
+        partidaPlanificadaRepository.delete(partida);
     }
 
     @Override
-    public List<PartidaPlanificada> getIngresosByPresupuestoId(Long presupuestoId) {
-        return partidaPlanificadaRepository.findByPresupuestoIdAndRubroNaturaleza(
-                presupuestoId, NaturalezaMovimiento.INGRESO);
+    public List<PartidaPlanificada> getIngresosByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId) {
+        return partidaPlanificadaRepository.findByPresupuestoIdAndUsuarioIdAndRubroNaturaleza(
+                presupuestoId, usuarioId, NaturalezaMovimiento.INGRESO);
     }
 
     @Override
-    public List<PartidaPlanificada> getGastosByPresupuestoId(Long presupuestoId) {
-        return partidaPlanificadaRepository.findByPresupuestoIdAndRubroNaturaleza(
-                presupuestoId, NaturalezaMovimiento.GASTO);
+    public List<PartidaPlanificada> getGastosByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId) {
+        return partidaPlanificadaRepository.findByPresupuestoIdAndUsuarioIdAndRubroNaturaleza(
+                presupuestoId, usuarioId, NaturalezaMovimiento.GASTO);
     }
 
     @Override
-    public List<PartidaPlanificada> getAhorroByPresupuestoId(Long presupuestoId) {
-        return partidaPlanificadaRepository.findByPresupuestoIdAndRubroNaturaleza(
-                presupuestoId, NaturalezaMovimiento.RESERVA_AHORRO);
+    public List<PartidaPlanificada> getAhorroByPresupuestoIdAndUsuarioId(Long presupuestoId, Long usuarioId) {
+        return partidaPlanificadaRepository.findByPresupuestoIdAndUsuarioIdAndRubroNaturaleza(
+                presupuestoId, usuarioId, NaturalezaMovimiento.RESERVA_AHORRO);
     }
 
     @Override
-    public PartidaPlanificada consolidar(Long id) {
-        PartidaPlanificada partida = partidaPlanificadaRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Partida planificada no encontrada con id " + id));
+    public PartidaPlanificada actualizarMontoComprometido(Long id, Long usuarioId, BigDecimal montoComprometido, BigDecimal porcentaje) {
+        PartidaPlanificada partida = getByIdOwnedByUsuario(id, usuarioId);
+
+        validarActualizacionMonto(montoComprometido, porcentaje);
+
+        BigDecimal montoOriginal = partida.getMontoComprometido();
+        BigDecimal montoActualizado = montoComprometido != null
+                ? montoComprometido
+                : montoOriginal.add(montoOriginal.multiply(porcentaje).divide(BigDecimal.valueOf(100)));
+
+        partida.setMontoComprometido(montoActualizado);
+        return partidaPlanificadaRepository.save(partida);
+    }
+
+    @Override
+    public PartidaPlanificada consolidar(Long id, Long usuarioId) {
+        PartidaPlanificada partida = getByIdOwnedByUsuario(id, usuarioId);
 
         BigDecimal montoTotal = transaccionRepository.sumMontoByPartidaPlanificadaId(id);
         partida.setMontoComprometido(montoTotal);
-        partida.setConsolidado(Boolean.TRUE);
+        partida.setConsolidado(true);
 
-        return partidaPlanificadaRepository.save(partida);
+        Long partidaOrigenId = partida.getPartidaOrigen() != null ? partida.getPartidaOrigen().getId() : partida.getId();
+        List<PartidaPlanificada> partidasRelacionadas =
+                partidaPlanificadaRepository.findByPartidaOrigenIdAndFechaObjetivoGreaterThanEqual(
+                        partidaOrigenId, LocalDate.now());
+
+        List<PartidaPlanificada> partidasActualizadas = new ArrayList<>();
+        partidasActualizadas.add(partida);
+
+        for (PartidaPlanificada copia : partidasRelacionadas) {
+            if (copia.getId().equals(partida.getId())) {
+                continue;
+            }
+
+            copia.setMontoComprometido(montoTotal);
+            copia.setConsolidado(!esPartidaFutura(copia));
+            copia.setCuota(calcularCuotaAjustada(partida, copia));
+            partidasActualizadas.add(copia);
+        }
+
+        partidaPlanificadaRepository.saveAll(partidasActualizadas);
+        return partida;
+    }
+
+    private PartidaPlanificada getByIdOwnedByUsuario(Long id, Long usuarioId) {
+        return partidaPlanificadaRepository.findByIdAndUsuarioId(id, usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Partida planificada no encontrada con id " + id));
+    }
+
+    private void validarJerarquiaSinCiclos(PartidaPlanificada partidaPlanificada) {
+        Set<Long> visitados = new HashSet<>();
+        if (partidaPlanificada.getId() != null) {
+            visitados.add(partidaPlanificada.getId());
+        }
+
+        PartidaPlanificada actual = partidaPlanificada.getPartidaOrigen();
+        while (actual != null) {
+            Long actualId = actual.getId();
+            if (actualId != null && !visitados.add(actualId)) {
+                throw new IllegalArgumentException("Se detectó un ciclo en partidaOrigen");
+            }
+            actual = actualId != null
+                    ? partidaPlanificadaRepository.findById(actualId).orElse(actual.getPartidaOrigen())
+                    : actual.getPartidaOrigen();
+        }
+
+        partidaPlanificada.validarJerarquiaSinCiclos();
+    }
+
+    private void validarActualizacionMonto(BigDecimal montoComprometido, BigDecimal porcentaje) {
+        if (montoComprometido == null && porcentaje == null) {
+            throw new IllegalArgumentException("Debe enviar montoComprometido o porcentaje");
+        }
+
+        if (montoComprometido != null && porcentaje != null) {
+            throw new IllegalArgumentException("Solo debe enviar montoComprometido o porcentaje, no ambos");
+        }
+
+        if (porcentaje != null && porcentaje.compareTo(BigDecimal.valueOf(-100)) < 0) {
+            throw new IllegalArgumentException("porcentaje no puede ser menor a -100");
+        }
+    }
+
+    private boolean esPartidaFutura(PartidaPlanificada partida) {
+        return partida.getFechaObjetivo() == null || partida.getFechaObjetivo().isAfter(LocalDate.now());
+    }
+
+    private Integer calcularCuotaAjustada(PartidaPlanificada base, PartidaPlanificada copia) {
+        if (base.getCuota() == null || base.getFechaObjetivo() == null || copia.getFechaObjetivo() == null) {
+            return copia.getCuota();
+        }
+
+        long diferenciaMeses = ChronoUnit.MONTHS.between(
+                base.getFechaObjetivo().withDayOfMonth(1), copia.getFechaObjetivo().withDayOfMonth(1));
+        long cuotaAjustada = base.getCuota() + diferenciaMeses;
+
+        if (cuotaAjustada <= 0 || cuotaAjustada > Integer.MAX_VALUE) {
+            return null;
+        }
+
+        Integer cuotaCalculada = (int) cuotaAjustada;
+        if (copia.getCantidadCuotas() != null && cuotaCalculada > copia.getCantidadCuotas()) {
+            return null;
+        }
+
+        return cuotaCalculada;
     }
 }

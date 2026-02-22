@@ -8,6 +8,7 @@ import io.github.ahumadamob.plangastos.service.UsuarioService;
 import io.github.ahumadamob.plangastos.util.ApiResponseFactory;
 import java.util.List;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,7 +48,7 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<ApiResponseSuccessDto<UsuarioResponseDto>> create(
-            @RequestBody UsuarioRequestDto request) {
+            @Valid @RequestBody UsuarioRequestDto request) {
         UsuarioResponseDto data = UsuarioMapper.entityToResponse(
                 service.create(UsuarioMapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Usuario creado"));
@@ -55,7 +56,7 @@ public class UsuarioController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseSuccessDto<UsuarioResponseDto>> update(
-            @PathVariable Long id, @RequestBody UsuarioRequestDto request) {
+            @PathVariable Long id, @Valid @RequestBody UsuarioRequestDto request) {
         UsuarioResponseDto data = UsuarioMapper.entityToResponse(
                 service.update(id, UsuarioMapper.requestToEntity(request)));
         return ResponseEntity.ok(ApiResponseFactory.success(data, "Usuario actualizado"));

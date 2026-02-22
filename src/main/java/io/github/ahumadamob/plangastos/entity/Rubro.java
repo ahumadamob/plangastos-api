@@ -1,5 +1,8 @@
 package io.github.ahumadamob.plangastos.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,8 +18,9 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = "rubros")
 public class Rubro extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "usuario_id", nullable = true)
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     @NotNull
@@ -34,7 +38,7 @@ public class Rubro extends BaseEntity {
 
     @NotNull
     @Column(nullable = false)
-    private Boolean activo;
+    private boolean activo = false;
 
     public Usuario getUsuario() {
         return usuario;
@@ -68,11 +72,27 @@ public class Rubro extends BaseEntity {
         this.parent = parent;
     }
 
-    public Boolean getActivo() {
+    public boolean getActivo() {
         return activo;
     }
 
-    public void setActivo(Boolean activo) {
+    public void setActivo(boolean activo) {
         this.activo = activo;
+    }
+
+    public void validarJerarquiaSinCiclos() {
+        Set<Long> visitados = new HashSet<>();
+        if (getId() != null) {
+            visitados.add(getId());
+        }
+
+        Rubro actual = parent;
+        while (actual != null) {
+            Long actualId = actual.getId();
+            if (actualId != null && !visitados.add(actualId)) {
+                throw new IllegalArgumentException("La jerarquía de rubro contiene una autoreferencia o ciclo");
+            }
+            actual = actual.getParent();
+        }
     }
 }

@@ -5,15 +5,15 @@ import java.util.List;
 
 public interface PresupuestoService {
 
-    List<Presupuesto> getAll();
+    List<Presupuesto> getAllByUsuarioId(Long usuarioId);
 
-    List<Presupuesto> getAllOrderByFechaDesdeDesc();
+    List<Presupuesto> getAllByUsuarioIdOrderByFechaDesdeDesc(Long usuarioId);
 
-    Presupuesto getById(Long id);
+    Presupuesto getByIdAndUsuarioId(Long id, Long usuarioId);
 
     Presupuesto create(Presupuesto presupuesto);
 
-    Presupuesto update(Long id, Presupuesto presupuesto);
+    Presupuesto update(Long id, Long usuarioId, Presupuesto presupuesto);
 
-    void delete(Long id);
+    void delete(Long id, Long usuarioId);
 }

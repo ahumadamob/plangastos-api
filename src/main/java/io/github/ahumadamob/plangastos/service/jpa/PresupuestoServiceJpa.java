@@ -2,14 +2,18 @@ package io.github.ahumadamob.plangastos.service.jpa;
 
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
+import io.github.ahumadamob.plangastos.exception.BusinessValidationException;
+import io.github.ahumadamob.plangastos.exception.ResourceNotFoundException;
 import io.github.ahumadamob.plangastos.repository.PartidaPlanificadaRepository;
 import io.github.ahumadamob.plangastos.repository.PresupuestoRepository;
 import io.github.ahumadamob.plangastos.service.PresupuestoService;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,22 +30,24 @@ public class PresupuestoServiceJpa implements PresupuestoService {
     }
 
     @Override
-    public List<Presupuesto> getAll() {
-        return presupuestoRepository.findAll();
+    public List<Presupuesto> getAllByUsuarioId(Long usuarioId) {
+        return presupuestoRepository.findByUsuarioIdAndInactivoFalse(usuarioId);
     }
 
     @Override
-    public List<Presupuesto> getAllOrderByFechaDesdeDesc() {
-        return presupuestoRepository.findAllByOrderByFechaDesdeDesc();
+    public List<Presupuesto> getAllByUsuarioIdOrderByFechaDesdeDesc(Long usuarioId) {
+        return presupuestoRepository.findByUsuarioIdAndInactivoFalseOrderByFechaDesdeDesc(usuarioId);
     }
 
     @Override
-    public Presupuesto getById(Long id) {
-        return presupuestoRepository.findById(id).orElse(null);
+    public Presupuesto getByIdAndUsuarioId(Long id, Long usuarioId) {
+        return getByIdOwnedByUsuario(id, usuarioId);
     }
 
     @Override
     public Presupuesto create(Presupuesto presupuesto) {
+        validarRangoFechas(presupuesto);
+        validarJerarquiaSinCiclos(presupuesto);
         Presupuesto nuevoPresupuesto = presupuestoRepository.save(presupuesto);
 
         if (presupuesto.getPresupuestoOrigen() != null) {
@@ -52,14 +58,50 @@ public class PresupuestoServiceJpa implements PresupuestoService {
     }
 
     @Override
-    public Presupuesto update(Long id, Presupuesto presupuesto) {
+    public Presupuesto update(Long id, Long usuarioId, Presupuesto presupuesto) {
+        getByIdOwnedByUsuario(id, usuarioId);
         presupuesto.setId(id);
+        validarRangoFechas(presupuesto);
+        validarJerarquiaSinCiclos(presupuesto);
         return presupuestoRepository.save(presupuesto);
     }
 
     @Override
-    public void delete(Long id) {
-        presupuestoRepository.deleteById(id);
+    public void delete(Long id, Long usuarioId) {
+        Presupuesto presupuesto = getByIdOwnedByUsuario(id, usuarioId);
+        presupuestoRepository.delete(presupuesto);
+    }
+
+    private Presupuesto getByIdOwnedByUsuario(Long id, Long usuarioId) {
+        return presupuestoRepository.findByIdAndUsuarioId(id, usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Presupuesto no encontrado con id " + id));
+    }
+
+    private void validarRangoFechas(Presupuesto presupuesto) {
+        LocalDate fechaDesde = presupuesto.getFechaDesde();
+        LocalDate fechaHasta = presupuesto.getFechaHasta();
+
+        if (fechaDesde != null && fechaHasta != null && fechaDesde.isAfter(fechaHasta)) {
+            throw new BusinessValidationException("fechaDesde debe ser anterior o igual a fechaHasta");
+        }
+    }
+
+    private void validarJerarquiaSinCiclos(Presupuesto presupuesto) {
+        Set<Long> visitados = new HashSet<>();
+        if (presupuesto.getId() != null) {
+            visitados.add(presupuesto.getId());
+        }
+
+        Presupuesto actual = presupuesto.getPresupuestoOrigen();
+        while (actual != null) {
+            Long actualId = actual.getId();
+            if (actualId != null && !visitados.add(actualId)) {
+                throw new IllegalArgumentException("Se detectó un ciclo en presupuestoOrigen");
+            }
+            actual = actualId != null ? presupuestoRepository.findById(actualId).orElse(actual.getPresupuestoOrigen()) : actual.getPresupuestoOrigen();
+        }
+
+        presupuesto.validarJerarquiaSinCiclos();
     }
 
     private void copiarPartidasPlanificadas(Presupuesto nuevoPresupuesto) {
@@ -89,7 +131,8 @@ public class PresupuestoServiceJpa implements PresupuestoService {
         partidaNueva.setRubro(partidaOrigen.getRubro());
         partidaNueva.setDescripcion(partidaOrigen.getDescripcion());
         partidaNueva.setMontoComprometido(partidaOrigen.getMontoComprometido());
-        partidaNueva.setConsolidado(Boolean.FALSE);
+        partidaNueva.setPartidaOrigen(partidaOrigen);
+        partidaNueva.setConsolidado(false);
         partidaNueva.setCantidadCuotas(partidaOrigen.getCantidadCuotas());
         partidaNueva.setFechaObjetivo(ajustarFechaObjetivo(
                 partidaOrigen.getFechaObjetivo(), mesesDiferencia));
