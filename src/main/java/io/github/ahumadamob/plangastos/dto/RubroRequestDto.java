@@ -6,6 +6,7 @@ public class RubroRequestDto {
     private Long naturalezaMovimiento_id;
     private String nombre;
     private Boolean activo;
+    private String tipoAhorro;
 
 
     public Long getUsuario_id() {
@@ -37,5 +38,13 @@ public class RubroRequestDto {
 
     public void setActivo(Boolean activo) {
         this.activo = activo;
+    }
+
+    public String getTipoAhorro() {
+        return tipoAhorro;
+    }
+
+    public void setTipoAhorro(String tipoAhorro) {
+        this.tipoAhorro = tipoAhorro;
     }
 }

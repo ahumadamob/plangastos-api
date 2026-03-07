@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import io.github.ahumadamob.plangastos.dto.RubroRequestDto;
 import io.github.ahumadamob.plangastos.dto.RubroResponseDto;
 import io.github.ahumadamob.plangastos.entity.Rubro;
+import io.github.ahumadamob.plangastos.entity.TipoAhorro;
 
 @Component
 public class RubroMapper {
@@ -20,6 +21,7 @@ public class RubroMapper {
         rubro.setUsuario(mapperHelper.getUsuario(request.getUsuario_id()));
         rubro.setNaturaleza(mapperHelper.getNaturalezaMovimiento(request.getNaturalezaMovimiento_id()));
         rubro.setNombre(request.getNombre());
+        rubro.setTipoAhorro(parseTipoAhorro(request.getTipoAhorro()));
         rubro.setActivo(Boolean.TRUE.equals(request.getActivo()));
         return rubro;
     }
@@ -31,9 +33,17 @@ public class RubroMapper {
         response.setNaturaleza(rubro.getNaturaleza());
         response.setNombre(rubro.getNombre());
         response.setParent(rubro.getParent());
+        response.setTipoAhorro(rubro.getTipoAhorro());
         response.setActivo(rubro.getActivo());
         response.setCreatedAt(rubro.getCreatedAt());
         response.setUpdatedAt(rubro.getUpdatedAt());
         return response;
+    }
+
+    private TipoAhorro parseTipoAhorro(String tipoAhorro) {
+        if (tipoAhorro == null || tipoAhorro.isBlank()) {
+            return null;
+        }
+        return TipoAhorro.valueOf(tipoAhorro.trim().toUpperCase());
     }
 }

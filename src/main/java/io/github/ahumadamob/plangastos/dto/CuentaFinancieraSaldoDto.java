@@ -8,12 +8,22 @@ public class CuentaFinancieraSaldoDto {
     private String nombre;
     private String divisa;
     private BigDecimal saldo;
+    private BigDecimal saldoPlazoFijo;
+    private BigDecimal saldoFondoInversion;
 
-    public CuentaFinancieraSaldoDto(Long id, String nombre, String divisa, BigDecimal saldo) {
+    public CuentaFinancieraSaldoDto(
+            Long id,
+            String nombre,
+            String divisa,
+            BigDecimal saldo,
+            BigDecimal saldoPlazoFijo,
+            BigDecimal saldoFondoInversion) {
         this.id = id;
         this.nombre = nombre;
         this.divisa = divisa;
         this.saldo = saldo;
+        this.saldoPlazoFijo = saldoPlazoFijo;
+        this.saldoFondoInversion = saldoFondoInversion;
     }
 
     public Long getId() {
@@ -46,5 +56,21 @@ public class CuentaFinancieraSaldoDto {
 
     public void setSaldo(BigDecimal saldo) {
         this.saldo = saldo;
+    }
+
+    public BigDecimal getSaldoPlazoFijo() {
+        return saldoPlazoFijo;
+    }
+
+    public void setSaldoPlazoFijo(BigDecimal saldoPlazoFijo) {
+        this.saldoPlazoFijo = saldoPlazoFijo;
+    }
+
+    public BigDecimal getSaldoFondoInversion() {
+        return saldoFondoInversion;
+    }
+
+    public void setSaldoFondoInversion(BigDecimal saldoFondoInversion) {
+        this.saldoFondoInversion = saldoFondoInversion;
     }
 }

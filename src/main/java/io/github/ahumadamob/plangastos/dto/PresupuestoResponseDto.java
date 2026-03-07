@@ -10,6 +10,7 @@ public class PresupuestoResponseDto {
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
     private Boolean inactivo;
+    private Boolean actual;
     private Long presupuestoOrigen_id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -61,6 +62,14 @@ public class PresupuestoResponseDto {
 
     public void setPresupuestoOrigen_id(Long presupuestoOrigen_id) {
         this.presupuestoOrigen_id = presupuestoOrigen_id;
+    }
+
+    public Boolean getActual() {
+        return actual;
+    }
+
+    public void setActual(Boolean actual) {
+        this.actual = actual;
     }
 
     public LocalDateTime getCreatedAt() {

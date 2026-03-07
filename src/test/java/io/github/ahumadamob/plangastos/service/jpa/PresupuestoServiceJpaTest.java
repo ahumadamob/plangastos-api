@@ -9,12 +9,14 @@ import static org.mockito.Mockito.when;
 
 import io.github.ahumadamob.plangastos.entity.PartidaPlanificada;
 import io.github.ahumadamob.plangastos.entity.Presupuesto;
+import io.github.ahumadamob.plangastos.entity.Usuario;
 import io.github.ahumadamob.plangastos.exception.BusinessValidationException;
 import io.github.ahumadamob.plangastos.repository.PartidaPlanificadaRepository;
 import io.github.ahumadamob.plangastos.repository.PresupuestoRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -294,6 +296,57 @@ class PresupuestoServiceJpaTest {
         Presupuesto resultado = presupuestoServiceJpa.create(presupuesto);
 
         assertThat(resultado).isSameAs(presupuesto);
+    }
+
+    @Test
+    void create_CuandoEsActual_DebeDesactivarLosDemasPresupuestosDelUsuario() {
+        Presupuesto presupuesto = new Presupuesto();
+        presupuesto.setActual(true);
+        presupuesto.setUsuario(new Usuario());
+        presupuesto.getUsuario().setId(12L);
+
+        when(presupuestoRepository.save(presupuesto)).thenReturn(presupuesto);
+
+        presupuestoServiceJpa.create(presupuesto);
+
+        verify(presupuestoRepository).desactivarActualesDeUsuario(12L, null);
+    }
+
+    @Test
+    void update_CuandoRecibeOrigenIgualASuMismoId_DebeConservarElOrigenPrevio() {
+        Presupuesto existente = new Presupuesto();
+        existente.setId(8L);
+
+        Presupuesto origenAnterior = new Presupuesto();
+        origenAnterior.setId(2L);
+        existente.setPresupuestoOrigen(origenAnterior);
+
+        Presupuesto request = new Presupuesto();
+        request.setPresupuestoOrigen(new Presupuesto());
+        request.getPresupuestoOrigen().setId(8L);
+
+        when(presupuestoRepository.findByIdAndUsuarioId(8L, 3L)).thenReturn(Optional.of(existente));
+        when(presupuestoRepository.save(request)).thenReturn(request);
+
+        Presupuesto resultado = presupuestoServiceJpa.update(8L, 3L, request);
+
+        assertThat(resultado.getPresupuestoOrigen()).isSameAs(origenAnterior);
+    }
+
+    @Test
+    void update_CuandoEsActual_DebeDesactivarLosDemasExceptoElActualizado() {
+        Presupuesto existente = new Presupuesto();
+        existente.setId(9L);
+
+        Presupuesto request = new Presupuesto();
+        request.setActual(true);
+
+        when(presupuestoRepository.findByIdAndUsuarioId(9L, 7L)).thenReturn(Optional.of(existente));
+        when(presupuestoRepository.save(request)).thenReturn(request);
+
+        presupuestoServiceJpa.update(9L, 7L, request);
+
+        verify(presupuestoRepository).desactivarActualesDeUsuario(7L, 9L);
     }
 
 }

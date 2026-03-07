@@ -1,6 +1,7 @@
 package io.github.ahumadamob.plangastos.service.jpa;
 
 import io.github.ahumadamob.plangastos.entity.Rubro;
+import io.github.ahumadamob.plangastos.entity.NaturalezaMovimiento;
 import io.github.ahumadamob.plangastos.exception.ResourceNotFoundException;
 import io.github.ahumadamob.plangastos.repository.RubroRepository;
 import io.github.ahumadamob.plangastos.service.RubroService;
@@ -31,6 +32,7 @@ public class RubroServiceJpa implements RubroService {
     @Override
     public Rubro create(Rubro rubro) {
         validarJerarquiaSinCiclos(rubro);
+        normalizarTipoAhorro(rubro);
         return rubroRepository.save(rubro);
     }
 
@@ -39,6 +41,7 @@ public class RubroServiceJpa implements RubroService {
         getByIdOwnedByUsuario(id, usuarioId);
         rubro.setId(id);
         validarJerarquiaSinCiclos(rubro);
+        normalizarTipoAhorro(rubro);
         return rubroRepository.save(rubro);
     }
 
@@ -69,5 +72,11 @@ public class RubroServiceJpa implements RubroService {
         }
 
         rubro.validarJerarquiaSinCiclos();
+    }
+
+    private void normalizarTipoAhorro(Rubro rubro) {
+        if (rubro.getNaturaleza() != NaturalezaMovimiento.RESERVA_AHORRO) {
+            rubro.setTipoAhorro(null);
+        }
     }
 }

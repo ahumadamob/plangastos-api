@@ -34,6 +34,10 @@ public class Presupuesto extends BaseEntity {
     @Column(nullable = false)
     private boolean inactivo = false;
 
+    @NotNull
+    @Column(nullable = false)
+    private boolean actual = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "presupuesto_origen_id")
     private Presupuesto presupuestoOrigen;
@@ -84,6 +88,14 @@ public class Presupuesto extends BaseEntity {
 
     public void setPresupuestoOrigen(Presupuesto presupuestoOrigen) {
         this.presupuestoOrigen = presupuestoOrigen;
+    }
+
+    public boolean getActual() {
+        return actual;
+    }
+
+    public void setActual(boolean actual) {
+        this.actual = actual;
     }
 
     public void validarJerarquiaSinCiclos() {

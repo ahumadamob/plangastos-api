@@ -10,6 +10,7 @@ public class PresupuestoRequestDto {
     private LocalDate fechaDesde;
     private LocalDate fechaHasta;
     private Boolean inactivo;
+    private Boolean actual;
     private Long presupuestoOrigen_id;
 
 
@@ -59,6 +60,14 @@ public class PresupuestoRequestDto {
 
     public void setPresupuestoOrigen_id(Long presupuestoOrigen_id) {
         this.presupuestoOrigen_id = presupuestoOrigen_id;
+    }
+
+    public Boolean getActual() {
+        return actual;
+    }
+
+    public void setActual(Boolean actual) {
+        this.actual = actual;
     }
 
     @AssertTrue(message = "fechaDesde debe ser anterior o igual a fechaHasta")
