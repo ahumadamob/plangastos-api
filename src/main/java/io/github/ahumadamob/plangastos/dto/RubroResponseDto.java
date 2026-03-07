@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import io.github.ahumadamob.plangastos.entity.NaturalezaMovimiento;
 import io.github.ahumadamob.plangastos.entity.Rubro;
+import io.github.ahumadamob.plangastos.entity.TipoAhorro;
 import io.github.ahumadamob.plangastos.entity.Usuario;
 
 public class RubroResponseDto {
@@ -13,6 +14,7 @@ public class RubroResponseDto {
     private NaturalezaMovimiento naturaleza;
     private String nombre;
     private Rubro parent;
+    private TipoAhorro tipoAhorro;
     private Boolean activo;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -55,6 +57,14 @@ public class RubroResponseDto {
 
     public void setParent(Rubro parent) {
         this.parent = parent;
+    }
+
+    public TipoAhorro getTipoAhorro() {
+        return tipoAhorro;
+    }
+
+    public void setTipoAhorro(TipoAhorro tipoAhorro) {
+        this.tipoAhorro = tipoAhorro;
     }
 
     public Boolean getActivo() {

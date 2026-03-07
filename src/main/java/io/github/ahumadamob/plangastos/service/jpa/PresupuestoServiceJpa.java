@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PresupuestoServiceJpa implements PresupuestoService {
@@ -45,9 +46,15 @@ public class PresupuestoServiceJpa implements PresupuestoService {
     }
 
     @Override
+    @Transactional
     public Presupuesto create(Presupuesto presupuesto) {
         validarRangoFechas(presupuesto);
         validarJerarquiaSinCiclos(presupuesto);
+
+        if (presupuesto.getActual()) {
+            presupuestoRepository.desactivarActualesDeUsuario(presupuesto.getUsuario().getId(), null);
+        }
+
         Presupuesto nuevoPresupuesto = presupuestoRepository.save(presupuesto);
 
         if (presupuesto.getPresupuestoOrigen() != null) {
@@ -58,11 +65,23 @@ public class PresupuestoServiceJpa implements PresupuestoService {
     }
 
     @Override
+    @Transactional
     public Presupuesto update(Long id, Long usuarioId, Presupuesto presupuesto) {
-        getByIdOwnedByUsuario(id, usuarioId);
+        Presupuesto existente = getByIdOwnedByUsuario(id, usuarioId);
+
+        if (presupuesto.getPresupuestoOrigen() != null
+                && id.equals(presupuesto.getPresupuestoOrigen().getId())) {
+            presupuesto.setPresupuestoOrigen(existente.getPresupuestoOrigen());
+        }
+
         presupuesto.setId(id);
         validarRangoFechas(presupuesto);
         validarJerarquiaSinCiclos(presupuesto);
+
+        if (presupuesto.getActual()) {
+            presupuestoRepository.desactivarActualesDeUsuario(usuarioId, id);
+        }
+
         return presupuestoRepository.save(presupuesto);
     }
 

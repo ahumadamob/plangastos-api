@@ -27,6 +27,22 @@ public interface CuentaFinancieraRepository extends JpaRepository<CuentaFinancie
                             then -t.monto
                         else 0
                     end
+                ), 0),
+                coalesce(sum(
+                    case
+                        when r.naturaleza = io.github.ahumadamob.plangastos.entity.NaturalezaMovimiento.RESERVA_AHORRO
+                             and r.tipoAhorro = io.github.ahumadamob.plangastos.entity.TipoAhorro.PLAZO_FIJO
+                            then t.monto
+                        else 0
+                    end
+                ), 0),
+                coalesce(sum(
+                    case
+                        when r.naturaleza = io.github.ahumadamob.plangastos.entity.NaturalezaMovimiento.RESERVA_AHORRO
+                             and r.tipoAhorro = io.github.ahumadamob.plangastos.entity.TipoAhorro.FONDO_INVERSION
+                            then t.monto
+                        else 0
+                    end
                 ), 0)
             )
             from CuentaFinanciera c

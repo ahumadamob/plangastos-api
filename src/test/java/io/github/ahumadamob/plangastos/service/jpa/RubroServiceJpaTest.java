@@ -2,9 +2,13 @@ package io.github.ahumadamob.plangastos.service.jpa;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import io.github.ahumadamob.plangastos.entity.NaturalezaMovimiento;
 import io.github.ahumadamob.plangastos.entity.Rubro;
+import io.github.ahumadamob.plangastos.entity.TipoAhorro;
 import io.github.ahumadamob.plangastos.repository.RubroRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -107,5 +111,19 @@ class RubroServiceJpaTest {
         Rubro resultado = rubroServiceJpa.create(rubro);
 
         assertThat(resultado).isSameAs(rubro);
+    }
+
+    @Test
+    void create_CuandoNoEsReservaAhorro_DebeLimpiarTipoAhorro() {
+        Rubro rubro = new Rubro();
+        rubro.setNaturaleza(NaturalezaMovimiento.GASTO);
+        rubro.setTipoAhorro(TipoAhorro.PLAZO_FIJO);
+
+        when(rubroRepository.save(any(Rubro.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Rubro resultado = rubroServiceJpa.create(rubro);
+
+        assertThat(resultado.getTipoAhorro()).isNull();
+        verify(rubroRepository).save(rubro);
     }
 }

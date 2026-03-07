@@ -32,6 +32,10 @@ public class Rubro extends BaseEntity {
     @Column(nullable = false)
     private String nombre;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_ahorro", length = 30)
+    private TipoAhorro tipoAhorro;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Rubro parent;
@@ -70,6 +74,14 @@ public class Rubro extends BaseEntity {
 
     public void setParent(Rubro parent) {
         this.parent = parent;
+    }
+
+    public TipoAhorro getTipoAhorro() {
+        return tipoAhorro;
+    }
+
+    public void setTipoAhorro(TipoAhorro tipoAhorro) {
+        this.tipoAhorro = tipoAhorro;
     }
 
     public boolean getActivo() {
